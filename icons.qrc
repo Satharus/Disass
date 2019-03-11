@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/Artwork">
+        <file>Icons/Banner.png</file>
+        <file>Icons/Logo.png</file>
+        <file>Icons/BannerSmall.png</file>
+        <file>Icons/GPLv3Logo.png</file>
+        <file>Icons/GPLv3LogoSmall.png</file>
+    </qresource>
+</RCC>
