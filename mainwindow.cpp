@@ -170,7 +170,11 @@ void MainWindow::on_actionLicense_triggered()
 {
 	QMessageBox license;
 	license.setWindowTitle("License and Credit");
-	license.setText("Licensed under GNU GPLv3.\nAhmed Elmayyah (Satharus) - 2019\n");
+	license.setText("Disass - Copyright (C) 2019 Ahmed Elmayyah (Satharus)\n\n"
+					"This program is licensed under GNU GPLv3.\n\n"
+					"This program comes with ABSOLUTELY NO WARRANTY\n"
+					"This is free software, and you are welcome to redistribute it "
+					"under certain conditions.\nFor more info, check the GNU GPLv3 license.");
 
 	license.setStandardButtons(QMessageBox::Ok);
 	license.setDefaultButton(QMessageBox::Ok);
