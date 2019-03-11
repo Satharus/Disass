@@ -19,6 +19,7 @@ It's mainly made for disassembly in mind, but if you found it comfortable to use
 
 [ ] Add option to add breakpoints by clicking on code lines.
 
+[ ] Deploy an AppImage.
 
 
 
