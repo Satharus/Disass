@@ -2,7 +2,7 @@
 
 
 ## About 
-Disass (Short for disassemble) is a GDB front-end for the GNU Debugger.
+Disass (Short for disassemble) is a front-end for the GNU Debugger (GDB).
 
 It's mainly made for disassembly in mind, but if you found it comfortable to use for normal debugging purposes then go ahead!
 
