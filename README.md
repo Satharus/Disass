@@ -11,17 +11,22 @@ It's mainly made for disassembly in mind, but if you found it comfortable to use
 
 ## To-Do List
 
-[ ] Add a register watch box.
-
-[ ] Add a memory watch box.
-
 [ ] Add option to run commands from a file.
 
 [ ] Add option to add breakpoints by clicking on code lines.
 
+[ ] Fix an error where sometimes the user input isn't passed the GDB's child process (i.e the program being debugged).
+
+[ ] Add a feature to autodetect 64-bit and 32-bit executables. (Currently only 64bit executables are coded)
+
+[ ] Design a user friendly GUI with icons for buttons.
+
 [ ] Deploy an AppImage.
 
 
+~~[🗸] Add a register watch box.~~
+
+~~[🗸] Add a memory watch box.~~
 
 ## License
  Disass - GNU Debugger front-end
