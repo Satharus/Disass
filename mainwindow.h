@@ -4,57 +4,60 @@
 #include <QMainWindow>
 
 namespace Ui {
-  class MainWindow;
+class MainWindow;
 }
 
 class MainWindow : public QMainWindow
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow();
+    explicit MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
 
 private slots:
-	void on_sendButton_clicked();
+    void setUIInteraction(bool state);
 
-	void setStandardOutput();
-	void setStandardError();
+    void updateRegistersWindow();
+    void updateStackWindow();
+    void updateAssemblyOutput();
+    void updateCodeOutput();
+    void updateOutput();
+    void updateOutput(std::string output);
 
-	void on_actionOpen_triggered();
 
-	void on_intelButton_clicked();
+    void on_sendButton_clicked();
 
-	void on_atNtButton_clicked();
+    void on_actionOpen_triggered();
 
-	void on_breakButton_clicked();
+    void on_intelButton_clicked();
 
-	void on_stepOverButton_clicked();
+    void on_atNtButton_clicked();
 
-	void on_stepIntoButton_clicked();
+    void on_breakButton_clicked();
 
-	void on_nextCodeLineButton_clicked();
+    void on_stepOverButton_clicked();
 
-	void on_continueButton_clicked();
+    void on_stepIntoButton_clicked();
 
-	void on_runButton_clicked();
+    void on_nextCodeLineButton_clicked();
 
-	void on_quitButton_clicked();
+    void on_continueButton_clicked();
 
-	void setUIInteraction(bool state);
+    void on_runButton_clicked();
 
-	void on_registersButton_clicked();
+    void on_quitButton_clicked();
 
-	void on_actionQuit_triggered();
+    void on_actionQuit_triggered();
 
-	void on_actionContribute_triggered();
+    void on_actionContribute_triggered();
 
-	void on_actionLicense_triggered();
+    void on_actionLicense_triggered();
 
-	void on_actionAbout_triggered();
+    void on_actionAbout_triggered();
 
 private:
-  Ui::MainWindow *ui;
+    Ui::MainWindow *ui;
 };
 
 #endif // MAINWINDOW_H

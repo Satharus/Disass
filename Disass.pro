@@ -34,7 +34,9 @@ HEADERS += \
 
 FORMS += \
         mainwindow.ui
+
 #CONFIG += console
 
 RESOURCES += \
     icons.qrc
+
