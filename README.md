@@ -1,10 +1,13 @@
-![alt text](https://github.com/Satharus/Disass/blob/master/Icons/Banner.png)
+![Disass_Logo](https://github.com/Satharus/Disass/blob/master/Icons/Banner.png)
 
 
 ## About 
 Disass (Short for disassemble) is a front-end for the GNU Debugger (GDB).
 
 It's mainly made for disassembly in mind, but if you found it comfortable to use for normal debugging purposes then go ahead!
+
+![Screenshot](https://github.com/Satharus/Disass/blob/master/Screenshots/v0.02.png)
+
 
 ## How to use
 - Head over the the ![releases](https://github.com/Satharus/Disass/releases) page
