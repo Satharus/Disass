@@ -18,6 +18,8 @@ public:
 private slots:
     void setUIInteraction(bool state);
 
+    void checkForArguments(QStringList args);
+
     void updateRegistersWindow();
     void updateStackWindow();
     void updateAssemblyOutput();

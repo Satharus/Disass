@@ -12,13 +12,13 @@
 
 static GDB gdb1;
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     this->setFixedSize(QSize(1115, 630));	//Resizing to be added soon :D
     ui->pidBox->hide();			//Comment if you want to see the pid of GDB.
+
+    checkForArguments(QCoreApplication::arguments());
 }
 
 MainWindow::~MainWindow()
@@ -65,6 +65,26 @@ void MainWindow::setUIInteraction(bool state)
         ui->nextCodeLineButton->setEnabled(false);
         ui->continueButton->setEnabled(false);
         ui->actionOpen->setEnabled(true);
+    }
+}
+
+void MainWindow::checkForArguments(QStringList args)
+{
+    if (args.size() > 1)
+    { //If an argument is passed
+        if (QFileInfo::exists(args[1]))
+        { //If the argument passed is an existent file
+            gdb1.startInstance(args[1].toStdString());
+
+            ui->pidBox->setText(gdb1.getPIDString().c_str());
+            setUIInteraction(true); //Enable the UI
+
+            std::string output = gdb1.getCurrentOutput().toStdString();
+            ui->gdbOutputBox->append(output.c_str());
+        }
+        //If it isn't a file and isn't a help argument
+        else if  (args[1].toStdString() != "--help" && args[1].toStdString() != "-h")
+            QMessageBox::information(this, "Invalid Argument", "The specified file doesn't exist, starting to defaults.");
     }
 }
 
@@ -232,28 +252,6 @@ void MainWindow::on_sendButton_clicked()
     ui->gdbOutputBox->append(output.c_str());
 }
 
-void MainWindow::on_actionOpen_triggered()
-{
-    QString filePath = QFileDialog::getOpenFileName(this, tr("Open Binary"), QDir::homePath());
-
-    if (filePath.size() == 0)
-    {
-        QMessageBox::information(this, tr("Failed"), "Failed to open file, opening GDB to defaults.");
-        gdb1.startInstance();
-    }
-    else gdb1.startInstance(filePath.toStdString());
-
-    //Connect GBD output to textbox //Not needed, kept for debugging purposes.
-    //	QObject::connect(gdb1.getQProcess(), &QProcess::readyReadStandardOutput, this, &MainWindow::setStandardOutput);
-    //	QObject::connect(gdb1.getQProcess(), &QProcess::readyReadStandardError, this, &MainWindow::setStandardError);
-    ui->pidBox->setText(gdb1.getPIDString().c_str());
-
-    setUIInteraction(true); //Enable the UI
-
-    std::string output = gdb1.getCurrentOutput().toStdString();
-    ui->gdbOutputBox->append(output.c_str());
-}
-
 void MainWindow::on_intelButton_clicked()
 {
     gdb1.sendCommand("set disassembly-flavor intel");
@@ -271,6 +269,7 @@ void MainWindow::on_breakButton_clicked()
     std::string address = ui->breakBox->text().toStdString();
     gdb1.sendCommand("break " + address);
     ui->breakBox->clear();
+    updateOutput();
 }
 
 void MainWindow::on_stepOverButton_clicked()
@@ -332,6 +331,28 @@ void MainWindow::on_runButton_clicked()
     ui->runButton->setText("Restart");
     std::string output = gdb1.getCurrentOutput().toStdString();
     updateOutput(output);
+}
+
+void MainWindow::on_actionOpen_triggered()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Open Binary"), QDir::homePath());
+
+    if (filePath.size() == 0)
+    {
+        QMessageBox::information(this, tr("Failed"), "Failed to open file, opening GDB to defaults.");
+        gdb1.startInstance();
+    }
+    else gdb1.startInstance(filePath.toStdString());
+
+    //Connect GBD output to textbox //Not needed, kept for debugging purposes.
+    //	QObject::connect(gdb1.getQProcess(), &QProcess::readyReadStandardOutput, this, &MainWindow::setStandardOutput);
+    //	QObject::connect(gdb1.getQProcess(), &QProcess::readyReadStandardError, this, &MainWindow::setStandardError);
+    ui->pidBox->setText(gdb1.getPIDString().c_str());
+
+    setUIInteraction(true); //Enable the UI
+
+    std::string output = gdb1.getCurrentOutput().toStdString();
+    ui->gdbOutputBox->append(output.c_str());
 }
 
 void MainWindow::on_quitButton_clicked()
