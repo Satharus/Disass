@@ -46,8 +46,8 @@
    <widget class="QTextEdit" name="pidBox">
     <property name="geometry">
      <rect>
-      <x>600</x>
-      <y>70</y>
+      <x>710</x>
+      <y>0</y>
       <width>111</width>
       <height>31</height>
      </rect>
@@ -402,6 +402,30 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="verticalScrollBarPolicy">
      <enum>Qt::ScrollBarAsNeeded</enum>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="fileArchBox">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>60</y>
+      <width>181</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Monospace</family>
+     </font>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="readOnly">
+     <bool>false</bool>
+    </property>
+    <property name="placeholderText">
+     <string>File Architecture</string>
     </property>
    </widget>
   </widget>

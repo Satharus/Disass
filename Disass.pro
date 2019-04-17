@@ -26,11 +26,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    gdb.cpp
+    gdb.cpp \
+    shellfunctions.cpp
 
 HEADERS += \
         mainwindow.h \
-    gdb.h
+    gdb.h \
+    shellfunctions.h
 
 FORMS += \
         mainwindow.ui

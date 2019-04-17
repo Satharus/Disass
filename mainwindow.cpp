@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
     this->setFixedSize(QSize(1115, 630));	//Resizing to be added soon :D
     ui->pidBox->hide();			//Comment if you want to see the pid of GDB.
-
+    ui->fileArchBox->setReadOnly(true);
     checkForArguments(QCoreApplication::arguments());
 }
 
@@ -99,21 +99,44 @@ void MainWindow::updateRegistersWindow()
     QVector <QString> lines; //Vector to hold lines
     QString line;            //A single output line
 
-    for (int i = 0; i < output.size(); i++)
+    if (gdb1.isx86())
     {
-        //Push the character if it isn't a newline
-        if (output[i] != '\n') line.push_back(output[i]);
-        else
+        for (int i = 0; i < output.size(); i++)
         {
-            //Delete the duplicate values of rip
-            if (line.contains("rip")) line.remove(35, 14);
+            //Push the character if it isn't a newline
+            if (output[i] != '\n') line.push_back(output[i]);
+            else
+            {
+                //Delete the duplicate values of eip
+                if (line.contains("eip")) line.remove(35, 10);
 
-            //Delete the extra spaces in all lines
-            if (line.contains("eflag")) line.remove(6,7);
-            else line.remove(3,7);
+                //Delete the extra spaces in all lines
+                if (line.contains("eflag")) line.remove(6,7);
+                else line.remove(3,7);
 
-            lines.push_back(line);
-            line.clear();
+                lines.push_back(line);
+                line.clear();
+            }
+        }
+    }
+    else
+    {
+        for (int i = 0; i < output.size(); i++)
+        {
+            //Push the character if it isn't a newline
+            if (output[i] != '\n') line.push_back(output[i]);
+            else
+            {
+                //Delete the duplicate values of rip
+                if (line.contains("rip")) line.remove(35, 14);
+
+                //Delete the extra spaces in all lines
+                if (line.contains("eflag")) line.remove(6,7);
+                else line.remove(3,7);
+
+                lines.push_back(line);
+                line.clear();
+            }
         }
     }
 
@@ -127,7 +150,12 @@ void MainWindow::updateStackWindow()
     ui->stackBox->clear();
     std::string nStackWords = "28";
     //Examine nStackWords words from the top stack down
-    QByteArray output = gdb1.getCommandOutput("x/"+nStackWords+"wx $rsp");
+    QByteArray output;
+    if (gdb1.isx86())   //if the app being debugged is 32-bit
+        output = gdb1.getCommandOutput("x/"+nStackWords+"wx $esp");
+    else                //if 64-bit
+        output = gdb1.getCommandOutput("x/"+nStackWords+"wx $rsp");
+
     gdb1.sendCommand("."); //Send a dummy command to get the full output.
     output += gdb1.getCurrentOutput(); //Get the rest of the output.
     ui->gdbOutputBox->append(output); //Append the output to the GDB output box as is.
@@ -158,8 +186,13 @@ void MainWindow::updateAssemblyOutput()
 {
     ui->gdbAsmOutputBox->clear();
     std::string nInstructions = "20";
+    QString output;
     //Examine nInstructions insructions after the current instruction.
-    QString output = gdb1.getCommandOutput("x/"+nInstructions+"i $rip");
+    if (gdb1.isx86())   //if the app being debugged is 32-bit
+        output = gdb1.getCommandOutput("x/"+nInstructions+"i $eip");
+    else                //if 64-bit
+        output = gdb1.getCommandOutput("x/"+nInstructions+"i $rip");
+
     gdb1.sendCommand("."); //Send a dummy command to get the full output.
     output += gdb1.getCurrentOutput(); //Get the rest of the output.
     ui->gdbOutputBox->append(output); //Append the output to the GDB output box as is.
@@ -342,11 +375,17 @@ void MainWindow::on_actionOpen_triggered()
         QMessageBox::information(this, tr("Failed"), "Failed to open file, opening GDB to defaults.");
         gdb1.startInstance();
     }
-    else gdb1.startInstance(filePath.toStdString());
+    else
+    {
+        gdb1.startInstance(filePath.toStdString());
+        ui->fileArchBox->setText(gdb1.getArch());
+    }
+    /*
+    Connect GBD output to textbox //Not needed, kept for debugging purposes.
+    QObject::connect(gdb1.getQProcess(), &QProcess::readyReadStandardOutput, this, &MainWindow::setStandardOutput);
+    QObject::connect(gdb1.getQProcess(), &QProcess::readyReadStandardError, this, &MainWindow::setStandardError);
+    */
 
-    //Connect GBD output to textbox //Not needed, kept for debugging purposes.
-    //	QObject::connect(gdb1.getQProcess(), &QProcess::readyReadStandardOutput, this, &MainWindow::setStandardOutput);
-    //	QObject::connect(gdb1.getQProcess(), &QProcess::readyReadStandardError, this, &MainWindow::setStandardError);
     ui->pidBox->setText(gdb1.getPIDString().c_str());
 
     setUIInteraction(true); //Enable the UI
@@ -367,6 +406,7 @@ void MainWindow::on_quitButton_clicked()
     ui->gdbOutputBox->clear();
     ui->registerBox->clear();
     ui->stackBox->clear();
+    ui->fileArchBox->clear();
     ui->runButton->setText("Run");
 }
 

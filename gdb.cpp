@@ -1,4 +1,5 @@
 #include "gdb.h"
+#include "shellfunctions.h"
 
 GDB::GDB() {}
 
@@ -11,20 +12,42 @@ void GDB::startInstance()	//Default case
 void GDB::startInstance(std::string filePath)
 {
     gdbInstance = new QProcess();
-    gdbInstance->start("gdb", QStringList() << QString(filePath.c_str()));
     //Start gdb with a file as a parameter.
+    gdbInstance->start("gdb", QStringList() << QString(filePath.c_str()));
+    //Set the architecture for the file.
+    setArch(filePath);
 }
 
-QByteArray GDB::getStandardOutput()
+void GDB::setArch(std::string filePath)
 {
-    QByteArray stdOut = gdbInstance->readAllStandardOutput();
-    return stdOut;
+    //Get file type
+    std::string output = getShellCommandOutput("file \"" + filePath + "\"");
+
+    if      (output.find("64") != std::string::npos)    arch = "x86-64 Executable";
+    else if (output.find("32") != std::string::npos)    arch = "x86 Executable";
+    else if (output.find("symbolic link") != std::string::npos)
+    {
+        //If link, follow the link recursively and then call setArch to detect
+        //the architecture of the original file that the link is pointing to.
+        std::string linkPath = getShellCommandOutput("readlink -en \"" + filePath + "\"");
+        setArch(linkPath);
+    }
+    else arch = "Unknown";
 }
 
-QByteArray GDB::getStandardError()
+QString GDB::getArch()
 {
-    QByteArray stdErr = gdbInstance->readAllStandardError();
-    return stdErr;
+    return arch;
+}
+
+bool GDB::isx86()
+{
+    return (arch == "x86 Executable");
+}
+
+bool GDB::isx86_64()
+{
+    return (arch == "x86-64 Executable");
 }
 
 long long GDB::getPID()
@@ -53,7 +76,6 @@ QByteArray GDB::getCommandOutput(std::string command)
     sendCommand(command);
     gdbInstance->waitForReadyRead();
     QByteArray output = gdbInstance->readAllStandardOutput();
-    this->outputString = output.toStdString();
     return output;
 }
 
@@ -61,11 +83,5 @@ QByteArray GDB::getCurrentOutput()
 {
     gdbInstance->waitForReadyRead();
     QByteArray output = gdbInstance->readAllStandardOutput();
-    this->outputString = output.toStdString();
     return output;
-}
-
-std::string GDB::getOutputString()
-{
-    return outputString;
 }
