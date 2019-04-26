@@ -17,6 +17,7 @@ public:
     void startInstance(std::string filePath);	//Start an instance of gdb,
                                                 //with a file to debug.
     void setArch(std::string filePath);
+    void forceArch(QString arch);
     QString getArch();
     bool isx86();
     bool isx86_64();

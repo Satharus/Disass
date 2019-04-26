@@ -453,7 +453,21 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionLicense"/>
     <addaction name="actionContribute"/>
    </widget>
+   <widget class="QMenu" name="menuConfigure">
+    <property name="title">
+     <string>Configure</string>
+    </property>
+    <widget class="QMenu" name="menuForce_Architecture">
+     <property name="title">
+      <string>Force Architecture</string>
+     </property>
+     <addaction name="action64_Bit"/>
+     <addaction name="action32_Bit"/>
+    </widget>
+    <addaction name="menuForce_Architecture"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuConfigure"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
@@ -484,6 +498,22 @@ p, li { white-space: pre-wrap; }
   <action name="actionQuit">
    <property name="text">
     <string>Quit</string>
+   </property>
+  </action>
+  <action name="action64_Bit">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>x86-64 (64-Bit)</string>
+   </property>
+  </action>
+  <action name="action32_Bit">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>x86 (32-Bit)</string>
    </property>
   </action>
  </widget>

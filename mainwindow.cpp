@@ -26,7 +26,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
 void MainWindow::setUIInteraction(bool state)
 {
     //This function disables/enables UI buttons.
@@ -453,4 +452,18 @@ void MainWindow::on_actionAbout_triggered()
 void MainWindow::on_actionQuit_triggered()
 {
     QApplication::quit();
+}
+
+void MainWindow::on_action64_Bit_triggered()
+{
+    gdb1.forceArch("x86-64 Executable");
+    ui->fileArchBox->setText(gdb1.getArch());
+    updateOutput();
+}
+
+void MainWindow::on_action32_Bit_triggered()
+{
+    gdb1.forceArch("x86 Executable");
+    ui->fileArchBox->setText(gdb1.getArch());
+    updateOutput();
 }

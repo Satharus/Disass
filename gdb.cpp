@@ -35,6 +35,11 @@ void GDB::setArch(std::string filePath)
     else arch = "Unknown";
 }
 
+void GDB::forceArch(QString arch)
+{
+    this->arch = arch;
+}
+
 QString GDB::getArch()
 {
     return arch;

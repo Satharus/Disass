@@ -58,6 +58,10 @@ private slots:
 
     void on_actionAbout_triggered();
 
+    void on_action64_Bit_triggered();
+
+    void on_action32_Bit_triggered();
+
 private:
     Ui::MainWindow *ui;
 };
