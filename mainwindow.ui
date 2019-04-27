@@ -39,6 +39,9 @@
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
+    <property name="toolTip">
+     <string>Send command to GDB</string>
+    </property>
     <property name="text">
      <string/>
     </property>
@@ -148,6 +151,9 @@ p, li { white-space: pre-wrap; }
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
+    <property name="toolTip">
+     <string>Set syntax to AT&amp;T</string>
+    </property>
     <property name="text">
      <string notr="true">AT&amp;&amp;T Syntax</string>
     </property>
@@ -169,6 +175,9 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="toolTip">
+     <string>Set syntax to Intel</string>
     </property>
     <property name="text">
      <string>Intel Syntax</string>
@@ -269,6 +278,9 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="toolTip">
+     <string>Break</string>
     </property>
     <property name="text">
      <string/>
