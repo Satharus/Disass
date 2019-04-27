@@ -407,7 +407,7 @@ void MainWindow::on_quitButton_clicked()
     ui->registerBox->clear();
     ui->stackBox->clear();
     ui->fileArchBox->clear();
-    ui->runButton->setText("Run");
+    ui->runButton->setIcon(QPixmap(":/Controls/Icons/Controls/Start_Button.png"));
 }
 
 void MainWindow::on_actionLicense_triggered()
@@ -438,7 +438,7 @@ void MainWindow::on_actionAbout_triggered()
 {
     QMessageBox about;
     about.setWindowTitle("About");
-    about.setText("Disass is a free and open source frontend to GDB that aims to make it easier "
+    about.setText("\t   Disass v0.05\nDisass is a free and open source frontend to GDB that aims to make it easier "
                   "to use for beginners.\n\nDisass uses GDB and the Qt graphics framework.");
 
     about.setStandardButtons(QMessageBox::Ok);
