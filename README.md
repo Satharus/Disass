@@ -26,7 +26,7 @@ It's mainly made for disassembly in mind, but if you found it comfortable to use
 [ ] Fix an error where sometimes the user input isn't passed the GDB's child process (i.e the program being debugged).
 
 
-[ ] Design a user friendly GUI with icons for buttons.
+~~[🗸] Design a user friendly GUI with icons for buttons.~~
 
 ~~[🗸] Add a feature to autodetect 64-bit and 32-bit executables.~~
 
