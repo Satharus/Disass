@@ -10,10 +10,19 @@ It's mainly made for disassembly in mind, but if you found it comfortable to use
 
 
 ## How to use
+- Make sure you have gdb installed.
+ ##### Arch and its Derivatives(Manjaro, Antergos, etc..)
+    # pacman -Sy gdb
+ ##### Debian and its Derivatives(Ubuntu, Linux Mint, etc..)
+    # apt update && apt install gdb
+ ##### RedHat and its Family(CentOS, Fedora, etc..)
+    # yum install gdb
 - Head over the the ![releases](https://github.com/Satharus/Disass/releases) page
 - Download the version you want of Disass
-- Mark the AppImage as executable or run ```chmod +x Disass-v0.05-x86_64.AppImage```
-- Double click the AppImage or run ```./Disass-v0.05-x86_64.AppImage```
+- Mark the AppImage as executable or run ```chmod +x Disass-vY-x86_64.AppImage```
+- Double click the AppImage or run ```./Disass-vY-x86_64.AppImage```
+
+**Note:** replace ```Y``` with the version you downloaded.
 
 
 
@@ -24,6 +33,9 @@ It's mainly made for disassembly in mind, but if you found it comfortable to use
 [ ] Add option to add breakpoints by clicking on code lines.
 
 [ ] Fix an error where sometimes the user input isn't passed the GDB's child process (i.e the program being debugged).
+
+
+[ ] Add a feature to autodetect if gdb is installed or not, and warn the user if it isn't.
 
 
 ~~[🗸] Design a user friendly GUI with icons for buttons.~~
