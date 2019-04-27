@@ -6,14 +6,14 @@ Disass (Short for disassemble) is a front-end for the GNU Debugger (GDB).
 
 It's mainly made for disassembly in mind, but if you found it comfortable to use for normal debugging purposes then go ahead!
 
-![Screenshot](https://github.com/Satharus/Disass/blob/master/Screenshots/v0.02.png)
+![Screenshot](https://github.com/Satharus/Disass/blob/master/Screenshots/v0.05.png)
 
 
 ## How to use
 - Head over the the ![releases](https://github.com/Satharus/Disass/releases) page
 - Download the version you want of Disass
-- Mark the AppImage as executable or run ```chmod +x Disass-v0.02-x86_64.AppImage```
-- Double click the AppImage or run ```./Disass-v0.02-x86_64.AppImage```
+- Mark the AppImage as executable or run ```chmod +x Disass-v0.05-x86_64.AppImage```
+- Double click the AppImage or run ```./Disass-v0.05-x86_64.AppImage```
 
 
 
