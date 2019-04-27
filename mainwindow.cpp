@@ -360,7 +360,8 @@ void MainWindow::on_runButton_clicked()
     std::string args = ui->commandLineArgumentsBox->text().toStdString();
     gdb1.sendCommand("run " + args);
     ui->commandLineArgumentsBox->clear();
-    ui->runButton->setText("Restart");
+    //ui->runButton->setText("Restart");
+    ui->runButton->setIcon(QPixmap(":/Controls/Icons/Controls/Restart_Button.png"));
     std::string output = gdb1.getCurrentOutput().toStdString();
     updateOutput(output);
 }

@@ -31,23 +31,36 @@
     <property name="geometry">
      <rect>
       <x>490</x>
-      <y>30</y>
-      <width>80</width>
-      <height>23</height>
+      <y>22</y>
+      <width>41</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
     <property name="text">
-     <string>Send</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="icons.qrc">
+      <normaloff>:/Controls/Icons/Controls/Send_Button.png</normaloff>:/Controls/Icons/Controls/Send_Button.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>42</width>
+      <height>44</height>
+     </size>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QTextEdit" name="pidBox">
     <property name="geometry">
      <rect>
-      <x>710</x>
-      <y>0</y>
+      <x>490</x>
+      <y>70</y>
       <width>111</width>
       <height>31</height>
      </rect>
@@ -80,15 +93,31 @@ p, li { white-space: pre-wrap; }
      <rect>
       <x>910</x>
       <y>540</y>
-      <width>51</width>
+      <width>41</width>
       <height>41</height>
      </rect>
     </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
+    <property name="toolTip">
+     <string>(Re)start debugging</string>
+    </property>
     <property name="text">
-     <string>Run</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="icons.qrc">
+      <normaloff>:/Controls/Icons/Controls/Start_Button.png</normaloff>:/Controls/Icons/Controls/Start_Button.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>28</width>
+      <height>29</height>
+     </size>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLineEdit" name="commandBox">
@@ -110,8 +139,8 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="geometry">
      <rect>
-      <x>600</x>
-      <y>10</y>
+      <x>650</x>
+      <y>60</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -120,7 +149,7 @@ p, li { white-space: pre-wrap; }
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
     <property name="text">
-     <string notr="true">ATnT Syntax</string>
+     <string notr="true">AT&amp;&amp;T Syntax</string>
     </property>
     <property name="checked">
      <bool>true</bool>
@@ -132,8 +161,8 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="geometry">
      <rect>
-      <x>600</x>
-      <y>30</y>
+      <x>650</x>
+      <y>80</y>
       <width>99</width>
       <height>21</height>
      </rect>
@@ -151,7 +180,7 @@ p, li { white-space: pre-wrap; }
       <x>20</x>
       <y>120</y>
       <width>591</width>
-      <height>451</height>
+      <height>461</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -232,26 +261,39 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="geometry">
      <rect>
-      <x>240</x>
-      <y>80</y>
-      <width>71</width>
-      <height>23</height>
+      <x>650</x>
+      <y>20</y>
+      <width>31</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
     <property name="text">
-     <string>Break</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="icons.qrc">
+      <normaloff>:/Controls/Icons/Controls/Break_Button.png</normaloff>:/Controls/Icons/Controls/Break_Button.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>26</width>
+      <height>26</height>
+     </size>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLineEdit" name="breakBox">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>70</y>
-      <width>211</width>
-      <height>41</height>
+      <x>690</x>
+      <y>20</y>
+      <width>261</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="placeholderText">
@@ -264,17 +306,33 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>30</y>
-      <width>121</width>
-      <height>23</height>
+      <x>80</x>
+      <y>80</y>
+      <width>41</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
+    <property name="toolTip">
+     <string>Step Into (next/nexti)</string>
+    </property>
     <property name="text">
-     <string>Step Into</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="icons.qrc">
+      <normaloff>:/Controls/Icons/Controls/Step_Into_Button.png</normaloff>:/Controls/Icons/Controls/Step_Into_Button.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>26</width>
+      <height>26</height>
+     </size>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QPushButton" name="stepOverButton">
@@ -283,17 +341,33 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>0</y>
-      <width>121</width>
-      <height>23</height>
+      <x>30</x>
+      <y>80</y>
+      <width>41</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
+    <property name="toolTip">
+     <string>Step Over (step/stepi)</string>
+    </property>
     <property name="text">
-     <string>Step Over</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="icons.qrc">
+      <normaloff>:/Controls/Icons/Controls/Step_Over_Button.png</normaloff>:/Controls/Icons/Controls/Step_Over_Button.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>28</width>
+      <height>28</height>
+     </size>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QPushButton" name="continueButton">
@@ -302,17 +376,33 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>90</y>
-      <width>121</width>
-      <height>23</height>
+      <x>180</x>
+      <y>80</y>
+      <width>41</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
+    <property name="toolTip">
+     <string>Continue running (continue)</string>
+    </property>
     <property name="text">
-     <string>Continue</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="icons.qrc">
+      <normaloff>:/Controls/Icons/Controls/Continue_Button.png</normaloff>:/Controls/Icons/Controls/Continue_Button.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>28</width>
+      <height>26</height>
+     </size>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QPushButton" name="nextCodeLineButton">
@@ -321,17 +411,33 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>60</y>
-      <width>121</width>
-      <height>23</height>
+      <x>130</x>
+      <y>80</y>
+      <width>41</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
+    <property name="toolTip">
+     <string>Next Code Line (until)</string>
+    </property>
     <property name="text">
-     <string>Next Code Line</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="icons.qrc">
+      <normaloff>:/Controls/Icons/Controls/Next_Line_Button.png</normaloff>:/Controls/Icons/Controls/Next_Line_Button.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>27</width>
+      <height>27</height>
+     </size>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QPushButton" name="quitButton">
@@ -340,17 +446,33 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="geometry">
      <rect>
-      <x>500</x>
-      <y>110</y>
-      <width>111</width>
-      <height>23</height>
+      <x>230</x>
+      <y>80</y>
+      <width>31</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
+    <property name="toolTip">
+     <string>Stop Debugging</string>
+    </property>
     <property name="text">
-     <string>Quit Debugging</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="icons.qrc">
+      <normaloff>:/Controls/Icons/Controls/Stop_Button.png</normaloff>:/Controls/Icons/Controls/Stop_Button.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>26</width>
+      <height>26</height>
+     </size>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLineEdit" name="commandLineArgumentsBox">
@@ -407,7 +529,7 @@ p, li { white-space: pre-wrap; }
    <widget class="QTextEdit" name="fileArchBox">
     <property name="geometry">
      <rect>
-      <x>620</x>
+      <x>780</x>
       <y>60</y>
       <width>181</width>
       <height>41</height>
@@ -418,11 +540,20 @@ p, li { white-space: pre-wrap; }
       <family>Monospace</family>
      </font>
     </property>
+    <property name="cursor" stdset="0">
+     <cursorShape>ArrowCursor</cursorShape>
+    </property>
     <property name="layoutDirection">
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="readOnly">
-     <bool>false</bool>
+     <bool>true</bool>
+    </property>
+    <property name="cursorWidth">
+     <number>1</number>
+    </property>
+    <property name="textInteractionFlags">
+     <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
     </property>
     <property name="placeholderText">
      <string>File Architecture</string>
