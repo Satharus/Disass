@@ -11,14 +11,17 @@ It's mainly made for disassembly in mind, but if you found it comfortable to use
 
 ## How to use
 - Make sure you have gdb installed.
- ##### Arch and its Derivatives(Manjaro, Antergos, etc..)
-    # pacman -Sy gdb
- ##### Debian and its Derivatives(Ubuntu, Linux Mint, etc..)
-    # apt update && apt install gdb
- ##### RedHat and its Family(CentOS, Fedora, etc..)
-    # yum install gdb
-- Head over the the ![releases](https://github.com/Satharus/Disass/releases) page
-- Download the version you want of Disass
+
+    ```$ gdb --version```
+    - If not, then install it using the following command depending on your distro of choice:
+   ##### Arch and its Derivatives(Manjaro, Antergos, etc..)
+      # pacman -Sy gdb
+   ##### Debian and its Derivatives(Ubuntu, Linux Mint, etc..)
+      # apt update && apt install gdb
+   ##### RedHat and its Family(CentOS, Fedora, etc..)
+      # yum install gdb
+- Head over to the [releases](https://github.com/Satharus/Disass/releases) page.
+- Download the [version](https://github.com/Satharus/Disass/tree/master/Screenshots) you want of Disass.
 - Mark the AppImage as executable or run ```chmod +x Disass-vY-x86_64.AppImage```
 - Double click the AppImage or run ```./Disass-vY-x86_64.AppImage```
 
