@@ -405,6 +405,8 @@ void MainWindow::on_quitButton_clicked()
     gdb1.getQProcess()->kill();	//Kill the GDB process
     setUIInteraction(false);	//Disable UI interaction
     ui->pidBox->clear();
+    ui->breakBox->clear();
+    ui->commandLineArgumentsBox->clear();
     ui->gdbAsmOutputBox->clear();
     ui->gdbCodeOutputBox->clear();
     ui->gdbOutputBox->clear();
