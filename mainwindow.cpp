@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "gdb.h"
+#include "shellfunctions.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -15,9 +16,10 @@ static GDB gdb1;
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setFixedSize(QSize(1115, 630));	//Resizing to be added soon :D
+    this->setFixedSize(QSize(1115, 635));	//Resizing to be added soon :D
     ui->pidBox->hide();			//Comment if you want to see the pid of GDB.
     ui->fileArchBox->setReadOnly(true);
+    ui->fileNameBox->setReadOnly(true);
     checkForArguments(QCoreApplication::arguments());
 }
 
@@ -369,7 +371,6 @@ void MainWindow::on_runButton_clicked()
 void MainWindow::on_actionOpen_triggered()
 {
     QString filePath = QFileDialog::getOpenFileName(this, tr("Open Binary"), QDir::homePath());
-
     if (filePath.size() == 0)
     {
         QMessageBox::information(this, tr("Failed"), "Failed to open file, opening GDB to defaults.");
@@ -379,6 +380,9 @@ void MainWindow::on_actionOpen_triggered()
     {
         gdb1.startInstance(filePath.toStdString());
         ui->fileArchBox->setText(gdb1.getArch());
+        std::string fileName = getShellCommandOutput("basename -z \"" + filePath.toStdString() + "\"");
+        ui->fileNameBox->setText(QString(fileName.c_str()));
+        ui->fileNameBox->setToolTip(filePath);
     }
     /*
     Connect GBD output to textbox //Not needed, kept for debugging purposes.
@@ -407,6 +411,8 @@ void MainWindow::on_quitButton_clicked()
     ui->registerBox->clear();
     ui->stackBox->clear();
     ui->fileArchBox->clear();
+    ui->fileNameBox->clear();
+    ui->fileNameBox->setToolTip("");
     ui->runButton->setIcon(QPixmap(":/Controls/Icons/Controls/Start_Button.png"));
 }
 
