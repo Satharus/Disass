@@ -80,6 +80,14 @@ void MainWindow::checkForArguments(QStringList args)
             ui->pidBox->setText(gdb1.getPIDString().c_str());
             setUIInteraction(true); //Enable the UI
 
+            //Set the architecture in the ArchBox
+            ui->fileArchBox->setText(gdb1.getArch());
+
+            //Get filename and set it in the FileNameBox
+            std::string fileName = getShellCommandOutput("basename -z \"" + args[1].toStdString() + "\"");
+            ui->fileNameBox->setText(QString(fileName.c_str()));
+            ui->fileNameBox->setToolTip(args[1]);
+
             std::string output = gdb1.getCurrentOutput().toStdString();
             ui->gdbOutputBox->append(output.c_str());
         }
@@ -362,7 +370,6 @@ void MainWindow::on_runButton_clicked()
     std::string args = ui->commandLineArgumentsBox->text().toStdString();
     gdb1.sendCommand("run " + args);
     ui->commandLineArgumentsBox->clear();
-    //ui->runButton->setText("Restart");
     ui->runButton->setIcon(QPixmap(":/Controls/Icons/Controls/Restart_Button.png"));
     std::string output = gdb1.getCurrentOutput().toStdString();
     updateOutput(output);

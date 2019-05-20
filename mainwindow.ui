@@ -192,6 +192,12 @@ p, li { white-space: pre-wrap; }
       <height>461</height>
      </rect>
     </property>
+    <property name="tabPosition">
+     <enum>QTabWidget::North</enum>
+    </property>
+    <property name="tabShape">
+     <enum>QTabWidget::Rounded</enum>
+    </property>
     <property name="currentIndex">
      <number>0</number>
     </property>
@@ -518,6 +524,12 @@ p, li { white-space: pre-wrap; }
       <pointsize>9</pointsize>
      </font>
     </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
    </widget>
    <widget class="QTextBrowser" name="stackBox">
     <property name="geometry">
@@ -533,6 +545,12 @@ p, li { white-space: pre-wrap; }
       <family>Monospace</family>
       <pointsize>9</pointsize>
      </font>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
     </property>
     <property name="verticalScrollBarPolicy">
      <enum>Qt::ScrollBarAsNeeded</enum>
