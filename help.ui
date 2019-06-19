@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>How to Use</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="Icons.qrc">
+    <normaloff>:/Artwork/Icons/Logo.png</normaloff>:/Artwork/Icons/Logo.png</iconset>
   </property>
   <widget class="QLabel" name="gifLabel">
    <property name="geometry">
@@ -27,6 +31,8 @@
    </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="Icons.qrc"/>
+ </resources>
  <connections/>
 </ui>
