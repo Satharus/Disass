@@ -40,6 +40,7 @@ It's mainly made for disassembly in mind, but if you found it comfortable to use
 
 [ ] Add a feature to autodetect if gdb is installed or not, and warn the user if it isn't.
 
+~~[🗸] Add user help.~~
 
 ~~[🗸] Design a user friendly GUI with icons for buttons.~~
 
