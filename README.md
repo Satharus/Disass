@@ -6,6 +6,9 @@ Disass (Short for disassemble) is a front-end for the GNU Debugger (GDB).
 
 It's mainly made for disassembly in mind, but if you found it comfortable to use for normal debugging purposes then go ahead!
 
+[Here is a GIF of all of the progress throughout the versions so far.](https://github.com/Satharus/Disass/blob/master/Screenshots/Progress.gif)
+
+#### Screenshot from the latest version: 0.07
 ![Screenshot](https://github.com/Satharus/Disass/blob/master/Screenshots/v0.07.png)
 
 
@@ -36,7 +39,6 @@ It's mainly made for disassembly in mind, but if you found it comfortable to use
 [ ] Add option to add breakpoints by clicking on code lines.
 
 [ ] Fix an error where sometimes the user input isn't passed the GDB's child process (i.e the program being debugged).
-
 
 [ ] Add a feature to autodetect if gdb is installed or not, and warn the user if it isn't.
 
