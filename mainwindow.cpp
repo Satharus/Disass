@@ -6,6 +6,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDir>
+#include <QLabel>
+#include <QMovie>
 #include <cstring>
 #include <QDesktopServices>
 #include <QString>
@@ -20,7 +22,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->pidBox->hide();			//Comment if you want to see the pid of GDB.
     ui->fileArchBox->setReadOnly(true);
     ui->fileNameBox->setReadOnly(true);
-    checkForArguments(QCoreApplication::arguments());
 }
 
 MainWindow::~MainWindow()
@@ -48,6 +49,8 @@ void MainWindow::setUIInteraction(bool state)
         ui->nextCodeLineButton->setEnabled(true);
         ui->continueButton->setEnabled(true);
         ui->actionOpen->setEnabled(false);
+        ui->action32_Bit->setEnabled(true);
+        ui->action64_Bit->setEnabled(true);
     }
     else				//GDB isn't running.
     {
@@ -66,10 +69,12 @@ void MainWindow::setUIInteraction(bool state)
         ui->nextCodeLineButton->setEnabled(false);
         ui->continueButton->setEnabled(false);
         ui->actionOpen->setEnabled(true);
+        ui->action32_Bit->setEnabled(false);
+        ui->action64_Bit->setEnabled(false);
     }
 }
 
-void MainWindow::checkForArguments(QStringList args)
+int MainWindow::checkForArguments(QStringList args)
 {
     if (args.size() > 1)
     { //If an argument is passed
@@ -90,11 +95,17 @@ void MainWindow::checkForArguments(QStringList args)
 
             std::string output = gdb1.getCurrentOutput().toStdString();
             ui->gdbOutputBox->append(output.c_str());
+            showFileOpenedNotification(fileName);
+            return 1;   //Opened GDB to a file being debugged in a GDB instance
         }
         //If it isn't a file and isn't a help argument
         else if  (args[1].toStdString() != "--help" && args[1].toStdString() != "-h")
+        {
             QMessageBox::information(this, "Invalid Argument", "The specified file doesn't exist, starting to defaults.");
+            return 2; //Opened Disass but to a default GDB instance
+        }
     }
+    return 0;   //Opened Disass to defaults (no instance running)
 }
 
 void MainWindow::updateRegistersWindow()
@@ -286,6 +297,28 @@ void MainWindow::updateOutput(std::string output)
     //To seperate the output of every step.
 }
 
+void MainWindow::showWelcome()
+{
+    QMessageBox welcome(QMessageBox::Information, "Welcome", "\tWelcome to Disass!\nYou can load an executable from the file menu.");
+    welcome.setFont(QFont("Sans Serif",10,0,false));
+    welcome.show();
+    welcome.exec();
+}
+
+void MainWindow::showFileOpenedNotification(std::string fileName)
+{
+    QMessageBox notification(QMessageBox::Information,"Success",
+                            "\tFile " + QString(fileName.c_str()) + " loaded successfuly.\n"
+                            "You should now:\n"
+                            "- Set a breakpoint from the textbox saying Address/Line, and click on the button next to it.\n"
+                            "- Run the program using the green button at the bottom right.\n"
+                            "- Step through the program using the buttons (Tooltips are available).\n",
+                             QMessageBox::Ok);
+    notification.setFont(QFont("Sans Serif",10,0,false));
+    notification.show();
+    notification.exec();
+}
+
 void MainWindow::on_sendButton_clicked()
 {
     //Sends the typed command to GDB and returns the output.
@@ -385,9 +418,10 @@ void MainWindow::on_actionOpen_triggered()
     }
     else
     {
+        std::string fileName = getShellCommandOutput("basename -z \"" + filePath.toStdString() + "\"");
+        showFileOpenedNotification(fileName);
         gdb1.startInstance(filePath.toStdString());
         ui->fileArchBox->setText(gdb1.getArch());
-        std::string fileName = getShellCommandOutput("basename -z \"" + filePath.toStdString() + "\"");
         ui->fileNameBox->setText(QString(fileName.c_str()));
         ui->fileNameBox->setToolTip(filePath);
     }
@@ -403,6 +437,7 @@ void MainWindow::on_actionOpen_triggered()
 
     std::string output = gdb1.getCurrentOutput().toStdString();
     ui->gdbOutputBox->append(output.c_str());
+
 }
 
 void MainWindow::on_quitButton_clicked()
@@ -453,8 +488,8 @@ void MainWindow::on_actionAbout_triggered()
 {
     QMessageBox about;
     about.setWindowTitle("About");
-    about.setText("\t   Disass v0.05\nDisass is a free and open source frontend to GDB that aims to make it easier "
-                  "to use for beginners.\n\nDisass uses GDB and the Qt graphics framework.");
+    about.setText("\t   Disass v0.07\nDisass is a free and open source frontend to GDB that aims to make it easier "
+                  "to use for beginners.\n\nDisass uses GDB and the Qt application framework.");
 
     about.setStandardButtons(QMessageBox::Ok);
     about.setDefaultButton(QMessageBox::Ok);
@@ -482,4 +517,10 @@ void MainWindow::on_action32_Bit_triggered()
     gdb1.forceArch("x86 Executable");
     ui->fileArchBox->setText(gdb1.getArch());
     updateOutput();
+}
+
+void MainWindow::on_actionHow_to_Use_triggered()
+{
+    QMovie *movie = new QMovie(":/Tutorials/Icons/Tutorials/How_to_Use.gif");
+    (void) movie;
 }

@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="/Artwork">
+        <file>Icons/Banner.png</file>
+	<file>Icons/Logo.png</file>
+	<file>Icons/BannerSmall.png</file>
+	<file>Icons/GPLv3Logo.png</file>
+	<file>Icons/GPLv3LogoSmall.png</file>
+    </qresource>
+    <qresource prefix="/Controls">
+        <file>Icons/Controls/Break_Button.png</file>
+	<file>Icons/Controls/Continue_Button.png</file>
+	<file>Icons/Controls/Next_Line_Button.png</file>
+	<file>Icons/Controls/Restart_Button.png</file>
+	<file>Icons/Controls/Send_Button.png</file>
+	<file>Icons/Controls/Start_Button.png</file>
+	<file>Icons/Controls/Step_Into_Button.png</file>
+	<file>Icons/Controls/Step_Over_Button.png</file>
+	<file>Icons/Controls/Stop_Button.png</file>
+    </qresource>
+    <qresource prefix="/Tutorials">
+        <file>Icons/Tutorials/How_to_Use.gif</file>
+    </qresource>
+</RCC>

@@ -40,5 +40,5 @@ FORMS += \
 #CONFIG += console
 
 RESOURCES += \
-    icons.qrc
+ Icons.qrc
 

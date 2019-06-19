@@ -13,12 +13,13 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+    int checkForArguments(QStringList args);
+    void showWelcome();
+    void showFileOpenedNotification(std::string fileName);
     ~MainWindow();
 
 private slots:
     void setUIInteraction(bool state);
-
-    void checkForArguments(QStringList args);
 
     void updateRegistersWindow();
     void updateStackWindow();
@@ -61,6 +62,8 @@ private slots:
     void on_action64_Bit_triggered();
 
     void on_action32_Bit_triggered();
+
+    void on_actionHow_to_Use_triggered();
 
 private:
     Ui::MainWindow *ui;

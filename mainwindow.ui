@@ -662,9 +662,7 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionAbout"/>
-    <addaction name="actionLicense"/>
-    <addaction name="actionContribute"/>
+    <addaction name="actionHow_to_Use"/>
    </widget>
    <widget class="QMenu" name="menuConfigure">
     <property name="title">
@@ -679,9 +677,18 @@ p, li { white-space: pre-wrap; }
     </widget>
     <addaction name="menuForce_Architecture"/>
    </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>About</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionLicense"/>
+    <addaction name="actionContribute"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuConfigure"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="sizeGripEnabled">
@@ -692,10 +699,16 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Select Executable</string>
    </property>
+   <property name="toolTip">
+    <string>Select an executable to debug</string>
+   </property>
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>About</string>
+    <string>Info</string>
+   </property>
+   <property name="toolTip">
+    <string>Info about Disass</string>
    </property>
   </action>
   <action name="actionLicense">
@@ -707,6 +720,9 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Contribute</string>
    </property>
+   <property name="toolTip">
+    <string>Contribute to Disass</string>
+   </property>
   </action>
   <action name="actionQuit">
    <property name="text">
@@ -717,16 +733,36 @@ p, li { white-space: pre-wrap; }
    <property name="checkable">
     <bool>false</bool>
    </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>x86-64 (64-Bit)</string>
+   </property>
+   <property name="toolTip">
+    <string>Force the architecture to be x86-64 (64-Bit)</string>
    </property>
   </action>
   <action name="action32_Bit">
    <property name="checkable">
     <bool>false</bool>
    </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>x86 (32-Bit)</string>
+   </property>
+   <property name="toolTip">
+    <string>Force the architecture to be x86 (32-Bit)</string>
+   </property>
+  </action>
+  <action name="actionHow_to_Use">
+   <property name="text">
+    <string>How to Use</string>
+   </property>
+   <property name="toolTip">
+    <string>Tutorial on how to use Disass</string>
    </property>
   </action>
  </widget>
