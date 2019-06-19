@@ -24,17 +24,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
+ help.cpp \
         main.cpp \
         mainwindow.cpp \
     gdb.cpp \
     shellfunctions.cpp
 
 HEADERS += \
+ help.h \
         mainwindow.h \
     gdb.h \
     shellfunctions.h
 
 FORMS += \
+        help.ui \
         mainwindow.ui
 
 #CONFIG += console

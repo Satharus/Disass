@@ -17,7 +17,7 @@
    <string>Disass</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="icons.qrc">
+   <iconset resource="Icons.qrc">
     <normaloff>:/Artwork/Icons/Logo.png</normaloff>:/Artwork/Icons/Logo.png</iconset>
   </property>
   <property name="tabShape">
@@ -46,7 +46,7 @@
      <string/>
     </property>
     <property name="icon">
-     <iconset resource="icons.qrc">
+     <iconset resource="Icons.qrc">
       <normaloff>:/Controls/Icons/Controls/Send_Button.png</normaloff>:/Controls/Icons/Controls/Send_Button.png</iconset>
     </property>
     <property name="iconSize">
@@ -110,7 +110,7 @@ p, li { white-space: pre-wrap; }
      <string/>
     </property>
     <property name="icon">
-     <iconset resource="icons.qrc">
+     <iconset resource="Icons.qrc">
       <normaloff>:/Controls/Icons/Controls/Start_Button.png</normaloff>:/Controls/Icons/Controls/Start_Button.png</iconset>
     </property>
     <property name="iconSize">
@@ -292,7 +292,7 @@ p, li { white-space: pre-wrap; }
      <string/>
     </property>
     <property name="icon">
-     <iconset resource="icons.qrc">
+     <iconset resource="Icons.qrc">
       <normaloff>:/Controls/Icons/Controls/Break_Button.png</normaloff>:/Controls/Icons/Controls/Break_Button.png</iconset>
     </property>
     <property name="iconSize">
@@ -340,7 +340,7 @@ p, li { white-space: pre-wrap; }
      <string/>
     </property>
     <property name="icon">
-     <iconset resource="icons.qrc">
+     <iconset resource="Icons.qrc">
       <normaloff>:/Controls/Icons/Controls/Step_Into_Button.png</normaloff>:/Controls/Icons/Controls/Step_Into_Button.png</iconset>
     </property>
     <property name="iconSize">
@@ -375,7 +375,7 @@ p, li { white-space: pre-wrap; }
      <string/>
     </property>
     <property name="icon">
-     <iconset resource="icons.qrc">
+     <iconset resource="Icons.qrc">
       <normaloff>:/Controls/Icons/Controls/Step_Over_Button.png</normaloff>:/Controls/Icons/Controls/Step_Over_Button.png</iconset>
     </property>
     <property name="iconSize">
@@ -410,7 +410,7 @@ p, li { white-space: pre-wrap; }
      <string/>
     </property>
     <property name="icon">
-     <iconset resource="icons.qrc">
+     <iconset resource="Icons.qrc">
       <normaloff>:/Controls/Icons/Controls/Continue_Button.png</normaloff>:/Controls/Icons/Controls/Continue_Button.png</iconset>
     </property>
     <property name="iconSize">
@@ -445,7 +445,7 @@ p, li { white-space: pre-wrap; }
      <string/>
     </property>
     <property name="icon">
-     <iconset resource="icons.qrc">
+     <iconset resource="Icons.qrc">
       <normaloff>:/Controls/Icons/Controls/Next_Line_Button.png</normaloff>:/Controls/Icons/Controls/Next_Line_Button.png</iconset>
     </property>
     <property name="iconSize">
@@ -480,7 +480,7 @@ p, li { white-space: pre-wrap; }
      <string/>
     </property>
     <property name="icon">
-     <iconset resource="icons.qrc">
+     <iconset resource="Icons.qrc">
       <normaloff>:/Controls/Icons/Controls/Stop_Button.png</normaloff>:/Controls/Icons/Controls/Stop_Button.png</iconset>
     </property>
     <property name="iconSize">
@@ -768,7 +768,7 @@ p, li { white-space: pre-wrap; }
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="Icons.qrc"/>
  </resources>
  <connections/>
 </ui>

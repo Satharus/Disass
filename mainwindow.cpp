@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "help.h"
 #include "gdb.h"
 #include "shellfunctions.h"
 
@@ -7,6 +8,7 @@
 #include <QMessageBox>
 #include <QDir>
 #include <QLabel>
+#include <QWindow>
 #include <QMovie>
 #include <cstring>
 #include <QDesktopServices>
@@ -521,6 +523,7 @@ void MainWindow::on_action32_Bit_triggered()
 
 void MainWindow::on_actionHow_to_Use_triggered()
 {
-    QMovie *movie = new QMovie(":/Tutorials/Icons/Tutorials/How_to_Use.gif");
-    (void) movie;
+    Help help;
+    help.setModal(true);
+    help.exec();
 }
