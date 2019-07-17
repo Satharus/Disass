@@ -65,6 +65,8 @@ private slots:
 
     void on_actionHow_to_Use_triggered();
 
+    void on_codeOutputTabs_currentChanged(int index);
+
 private:
     Ui::MainWindow *ui;
 };

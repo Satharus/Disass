@@ -527,3 +527,19 @@ void MainWindow::on_actionHow_to_Use_triggered()
     help.setModal(true);
     help.exec();
 }
+
+void MainWindow::on_codeOutputTabs_currentChanged(int index)
+{
+    if (index == 2)
+    {
+        ui->stepIntoButton->setEnabled(false);
+        ui->stepOverButton->setEnabled(false);
+        ui->nextCodeLineButton->setEnabled(false);
+    }
+    else
+    {
+        ui->stepIntoButton->setEnabled(true);
+        ui->stepOverButton->setEnabled(true);
+        ui->nextCodeLineButton->setEnabled(true);
+    }
+}
