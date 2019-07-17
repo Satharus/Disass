@@ -530,13 +530,15 @@ void MainWindow::on_actionHow_to_Use_triggered()
 
 void MainWindow::on_codeOutputTabs_currentChanged(int index)
 {
-    if (index == 2)
+    //If GDB Output is selected, and a program is being debugged.
+    if (index == 2 && ui->sendButton->isEnabled())
     {
         ui->stepIntoButton->setEnabled(false);
         ui->stepOverButton->setEnabled(false);
         ui->nextCodeLineButton->setEnabled(false);
     }
-    else
+    //If a program is being debugged.
+    else if (ui->sendButton->isEnabled())
     {
         ui->stepIntoButton->setEnabled(true);
         ui->stepOverButton->setEnabled(true);
