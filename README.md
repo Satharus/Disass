@@ -18,7 +18,7 @@ It's mainly made for disassembly in mind, but if you found it comfortable to use
     ```$ gdb --version```
     - If not, then install it using the following command depending on your distro of choice:
    ##### Arch and its Derivatives(Manjaro, Antergos, etc..)
-      # pacman -Sy gdb
+      # pacman -S gdb
    ##### Debian and its Derivatives(Ubuntu, Linux Mint, etc..)
       # apt update && apt install gdb
    ##### RedHat and its Family(CentOS, Fedora, etc..)
