@@ -1,12 +1,12 @@
 #include "shellfunctions.h"
 
-std::string getShellCommandOutput(std::string command)
+QString getShellCommandOutput(QString command)
 {
     FILE *file;
-    std::string output;
+    QString output;
     char buff[1024];
 
-    file = popen(command.c_str(), "r");
+    file = popen(command.toStdString().c_str(), "r");
 
     while (fgets(buff, sizeof(buff)-1, file) != nullptr)
         output.append(buff);

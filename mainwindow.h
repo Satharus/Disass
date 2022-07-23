@@ -1,7 +1,17 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QDesktopServices>
 #include <QMainWindow>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QString>
+#include <QWindow>
+#include <QLabel>
+#include <QMovie>
+#include <QDir>
+
+#include "gdb.h"
 
 namespace Ui {
 class MainWindow;
@@ -15,7 +25,7 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     int checkForArguments(QStringList args);
     void showWelcome();
-    void showFileOpenedNotification(std::string fileName);
+    void showFileOpenedNotification(QString fileName);
     ~MainWindow();
 
 private slots:
@@ -69,6 +79,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    GDB gdbInstance;
 };
 
 #endif // MAINWINDOW_H

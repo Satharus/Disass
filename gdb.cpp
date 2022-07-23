@@ -1,5 +1,4 @@
 #include "gdb.h"
-#include "shellfunctions.h"
 
 GDB::GDB() {}
 
@@ -9,30 +8,46 @@ void GDB::startInstance()	//Default case
     gdbInstance->start("gdb"); //Start gdb without parameters
 }
 
-void GDB::startInstance(std::string filePath)
+void GDB::startInstance(QString filePath)
 {
     gdbInstance = new QProcess();
     //Start gdb with a file as a parameter.
-    gdbInstance->start("gdb", QStringList() << QString(filePath.c_str()));
+    gdbInstance->start("gdb", QStringList() << filePath);
     //Set the architecture for the file.
     setArch(filePath);
 }
 
-void GDB::setArch(std::string filePath)
+void GDB::setArch(QString filePath)
 {
-    //Get file type
-    std::string output = getShellCommandOutput("file \"" + filePath + "\"");
+    QFileInfo executable(filePath);
 
-    if      (output.find("64") != std::string::npos)    arch = "x86-64 Executable";
-    else if (output.find("32") != std::string::npos)    arch = "x86 Executable";
-    else if (output.find("symbolic link") != std::string::npos)
+    if (executable.isSymbolicLink())
     {
         //If link, follow the link recursively and then call setArch to detect
         //the architecture of the original file that the link is pointing to.
-        std::string linkPath = getShellCommandOutput("readlink -en \"" + filePath + "\"");
-        setArch(linkPath);
+        QString actualPath = executable.symLinkTarget();
+        setArch(actualPath);
     }
-    else arch = "Unknown";
+    else //Attempt to determine the architecture
+    {
+        QFile _executable(filePath);
+        if (_executable.open(QIODevice::ReadOnly))
+        {
+            //Read the magic bytes of the file
+            _executable.seek(0);
+            QString magicBytes = _executable.read(5).toHex();
+
+            if (magicBytes == ELF_64_MAGIC)
+            {
+                arch = ELF_64_STR;
+            }
+            else if (magicBytes == ELF_32_MAGIC)
+            {
+                arch = ELF_32_STR;
+            }
+            else arch = UNKNOWN_STR;
+        }
+    }
 }
 
 void GDB::forceArch(QString arch)
@@ -47,22 +62,22 @@ QString GDB::getArch()
 
 bool GDB::isx86()
 {
-    return (arch == "x86 Executable");
+    return (arch == ELF_32_STR);
 }
 
 bool GDB::isx86_64()
 {
-    return (arch == "x86-64 Executable");
+    return (arch == ELF_64_STR);
 }
 
-long long GDB::getPID()
+quint64 GDB::getPID()
 {
     return gdbInstance->processId();
 }
 
-std::string GDB::getPIDString()
+QString GDB::getPIDString()
 {
-    return std::to_string(gdbInstance->processId());
+    return QString::number(gdbInstance->processId());
 }
 
 QProcess *GDB::getQProcess()
@@ -70,13 +85,13 @@ QProcess *GDB::getQProcess()
     return gdbInstance;
 }
 
-void GDB::sendCommand(std::string command)
+void GDB::sendCommand(QString command)
 {
-    system(("echo \'" + command + "\'" + "> /proc/" + getPIDString() + "/fd/0").c_str());
     //Redirects the command to STDIN of GDB by writing the command to the file /proc/$PID/fd/0
+    system(("echo \'" + command + "\'" + "> /proc/" + getPIDString() + "/fd/0").toStdString().c_str());
 }
 
-QByteArray GDB::getCommandOutput(std::string command)
+QByteArray GDB::getCommandOutput(QString command)
 {
     sendCommand(command);
     gdbInstance->waitForReadyRead();

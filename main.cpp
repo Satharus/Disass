@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <iostream>
-#include <string.h>
+
 int main(int argc, char *argv[])
 {
     if (argc > 1 && (strncmp(argv[1], "--help", 6) == 0 || strncmp(argv[1], "-h", 2) == 0))
