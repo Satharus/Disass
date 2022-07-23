@@ -30,34 +30,10 @@ It's mainly made for disassembly in mind, but if you found it comfortable to use
 
 **Note:** replace ```Y``` with the version you downloaded.
 
-
-
-## To-Do List
-
-[ ] Add option to run commands from a file.
-
-[ ] Add option to add breakpoints by clicking on code lines.
-
-[ ] Fix an error where sometimes the user input isn't passed the GDB's child process (i.e the program being debugged).
-
-[ ] Add a feature to autodetect if gdb is installed or not, and warn the user if it isn't.
-
-~~[🗸] Add user help.~~
-
-~~[🗸] Design a user friendly GUI with icons for buttons.~~
-
-~~[🗸] Add a feature to autodetect 64-bit and 32-bit executables.~~
-
-~~[🗸] Deploy an AppImage.~~
-
-~~[🗸] Add a register watch box.~~
-
-~~[🗸] Add a memory watch box.~~
-
 ## License
  Disass - GNU Debugger front-end
  
-   Copyright (C) 2019  Ahmed Elmayyah (Satharus)
+   Copyright (C) 2022  Ahmed Elmayyah (Satharus)
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
