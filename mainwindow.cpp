@@ -5,7 +5,7 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setFixedSize(QSize(1115, 635));	//Resizing to be added soon :D
+    this->setFixedSize(QSize(1115, 650));	//Resizing to be added soon :D
     ui->pidBox->hide();			//Comment if you want to see the pid of GDB.
     ui->fileArchBox->setReadOnly(true);
     ui->fileNameBox->setReadOnly(true);

@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1115</width>
-    <height>635</height>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -162,7 +162,7 @@ hr { height: 1px; border-width: 0; }
      <string notr="true">AT&amp;&amp;T Syntax</string>
     </property>
     <property name="checked">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QRadioButton" name="intelButton">
@@ -185,6 +185,9 @@ hr { height: 1px; border-width: 0; }
     </property>
     <property name="text">
      <string>Intel Syntax</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QTabWidget" name="codeOutputTabs">
@@ -525,7 +528,7 @@ hr { height: 1px; border-width: 0; }
     <property name="font">
      <font>
       <family>Monospace</family>
-      <pointsize>9</pointsize>
+      <pointsize>8</pointsize>
      </font>
     </property>
     <property name="frameShape">
