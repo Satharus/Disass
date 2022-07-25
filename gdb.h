@@ -6,29 +6,51 @@
 #include <QObject>
 #include <QString>
 #include <QFile>
+#include <QDebug>
 
-//ELF 64 Magic Bytes 0x7F ELF 0x02
-#define ELF_64_MAGIC "7f454c4602"
-//ELF 32 Magic Bytes 0x7F ELF 01
-#define ELF_32_MAGIC "7f454c4601"
+//ELF 64 Magic Bytes
+#define ELF_64_MAGIC "\x7f" "ELF" "\x02"
+//ELF 32 Magic Bytes
+#define ELF_32_MAGIC "\x7f" "ELF" "\x02"
 
 #define ELF_64_STR "x86-64 ELF"
 #define ELF_32_STR "x86 ELF"
 #define UNKNOWN_STR "Unknown"
 
-class GDB
+enum GDBCommands
 {
+    Start = 0,
+    Stop,
+    Continue,
+    ExamineStack,
+    ExamineRegisters,
+    ExamineAssembly,
+    ExamineCodeLine,
+    ExamineCode,
+    StepIntoI,
+    StepOverI,
+};
+
+class GDB  : public QObject
+{
+    Q_OBJECT
 private:
-    QProcess *gdbInstance;
+    QProcess *gdbProcess;
     QString arch;
+    QByteArray currentGDBOutput;
+
+signals:
+    void newOutputReady();
+
+public slots:
+    void readGDBOutput();
 
 public:
     GDB();
-    void startInstance();						//Start an instance of gdb.
-    void startInstance(QString filePath);	//Start an instance of gdb,
-                                                //with a file to debug.
-    void setArch(QString filePath);
-    void forceArch(QString arch);
+    ~GDB();
+    void start(QString filePath = "");	//Start an instance of gdb, with an optional file to debug.
+    void detectandSetArch(QString filePath);
+    void setArch(QString arch);
     QString getArch();
     bool isx86();
     bool isx86_64();
@@ -38,8 +60,15 @@ public:
     QProcess *getQProcess();		//Returns the QProcess gdbInstance.
 
     void sendCommand(QString command);		//Sends a command to gdb.
-    QByteArray getCommandOutput(QString command);	//Sends a command and returns its output.
-    QByteArray getCurrentOutput();				//Returns the output.
+    QString getCurrentGDBOutput();
+    quint64 lastCommand;
+
+    void examineStack(quint64 nStackWords);
+    void examineAssembly(quint64 nInstructions);
+    void examineRegisters();
+    void examineCurrentCodeLine();
+    void examineCodeLines(QString currentLine);
+
 };
 
 #endif // GDBFUNCTIONS_H

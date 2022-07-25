@@ -1,23 +1,25 @@
 #include "gdb.h"
 
-GDB::GDB() {}
-
-void GDB::startInstance()	//Default case
+GDB::GDB() : QObject ()
 {
-    gdbInstance = new QProcess();
-    gdbInstance->start("gdb"); //Start gdb without parameters
+    gdbProcess = new QProcess();
+    connect(gdbProcess, SIGNAL(readyRead()), this, SLOT(readGDBOutput()));
 }
 
-void GDB::startInstance(QString filePath)
+GDB::~GDB()
 {
-    gdbInstance = new QProcess();
-    //Start gdb with a file as a parameter.
-    gdbInstance->start("gdb", QStringList() << filePath);
+    delete gdbProcess;
+}
+
+void GDB::start(QString filePath)
+{
+    //Start gdb with an optional file as a parameter.
+    gdbProcess->start("gdb", QStringList() << filePath, QIODevice::ReadWrite);
     //Set the architecture for the file.
-    setArch(filePath);
+    detectandSetArch(filePath);
 }
 
-void GDB::setArch(QString filePath)
+void GDB::detectandSetArch(QString filePath)
 {
     QFileInfo executable(filePath);
 
@@ -26,7 +28,7 @@ void GDB::setArch(QString filePath)
         //If link, follow the link recursively and then call setArch to detect
         //the architecture of the original file that the link is pointing to.
         QString actualPath = executable.symLinkTarget();
-        setArch(actualPath);
+        detectandSetArch(actualPath);
     }
     else //Attempt to determine the architecture
     {
@@ -35,7 +37,7 @@ void GDB::setArch(QString filePath)
         {
             //Read the magic bytes of the file
             _executable.seek(0);
-            QString magicBytes = _executable.read(5).toHex();
+            QString magicBytes = _executable.read(5);
 
             if (magicBytes == ELF_64_MAGIC)
             {
@@ -47,10 +49,11 @@ void GDB::setArch(QString filePath)
             }
             else arch = UNKNOWN_STR;
         }
+        _executable.close();
     }
 }
 
-void GDB::forceArch(QString arch)
+void GDB::setArch(QString arch)
 {
     this->arch = arch;
 }
@@ -72,36 +75,79 @@ bool GDB::isx86_64()
 
 quint64 GDB::getPID()
 {
-    return gdbInstance->processId();
+    return gdbProcess->processId();
 }
 
 QString GDB::getPIDString()
 {
-    return QString::number(gdbInstance->processId());
+    return QString::number(gdbProcess->processId());
 }
 
 QProcess *GDB::getQProcess()
 {
-    return gdbInstance;
+    return gdbProcess;
+}
+
+QString GDB::getCurrentGDBOutput()
+{
+    return QString(currentGDBOutput);
+}
+
+void GDB::examineStack(quint64 nStackWords)
+{
+    //gdb labels a WORD as 4 bytes, let's agree to disagree
+    QString stackWordsStr = QString::number(nStackWords, 10);
+    if (isx86())
+        sendCommand("x/"+stackWordsStr+"wx $esp");
+    else
+        sendCommand("x/"+stackWordsStr+"wx $rsp");
+
+    lastCommand = GDBCommands::ExamineStack;
+}
+
+void GDB::examineAssembly(quint64 nInstructions)
+{
+    QString instructionsStr = QString::number(nInstructions, 10);
+    //Examine nInstructions insructions after the current instruction.
+    if (isx86())
+        sendCommand("x/"+instructionsStr+"i $eip");
+    else
+        sendCommand("x/"+instructionsStr+"i $rip");
+
+    lastCommand = GDBCommands::ExamineAssembly;
+}
+
+void GDB::examineRegisters()
+{
+    sendCommand("info reg");
+    lastCommand = GDBCommands::ExamineRegisters;
+}
+
+void GDB::examineCurrentCodeLine()
+{
+    sendCommand("frame");
+    lastCommand = GDBCommands::ExamineCodeLine;
+}
+
+void GDB::examineCodeLines(QString currentLine)
+{
+    sendCommand("list " + currentLine);
+    lastCommand = GDBCommands::ExamineCode;
 }
 
 void GDB::sendCommand(QString command)
 {
-    //Redirects the command to STDIN of GDB by writing the command to the file /proc/$PID/fd/0
-    system(("echo \'" + command + "\'" + "> /proc/" + getPIDString() + "/fd/0").toStdString().c_str());
+    //Add the \n character to simulate an enter keypress in gdb.
+    command += '\n';
+    gdbProcess->write(command.toUtf8(), command.toUtf8().size());
+    gdbProcess->waitForBytesWritten();
+    gdbProcess->waitForReadyRead();
 }
 
-QByteArray GDB::getCommandOutput(QString command)
+void GDB::readGDBOutput()
 {
-    sendCommand(command);
-    gdbInstance->waitForReadyRead();
-    QByteArray output = gdbInstance->readAllStandardOutput();
-    return output;
+    currentGDBOutput = gdbProcess->readAll();
+    qDebug() << currentGDBOutput;
+    emit newOutputReady();
 }
 
-QByteArray GDB::getCurrentOutput()
-{
-    gdbInstance->waitForReadyRead();
-    QByteArray output = gdbInstance->readAllStandardOutput();
-    return output;
-}

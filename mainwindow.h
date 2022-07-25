@@ -13,6 +13,11 @@
 
 #include "gdb.h"
 
+enum outputTabs
+{
+    Assembly = 0, Code, GDBOutput
+};
+
 namespace Ui {
 class MainWindow;
 }
@@ -29,15 +34,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void setUIInteraction(bool state);
-
-    void updateRegistersWindow();
-    void updateStackWindow();
-    void updateAssemblyOutput();
-    void updateCodeOutput();
     void updateOutput();
-    void updateOutput(std::string output);
-
 
     void on_sendButton_clicked();
 
@@ -59,8 +56,6 @@ private slots:
 
     void on_runButton_clicked();
 
-    void on_quitButton_clicked();
-
     void on_actionQuit_triggered();
 
     void on_actionContribute_triggered();
@@ -77,9 +72,24 @@ private slots:
 
     void on_codeOutputTabs_currentChanged(int index);
 
+    void on_stopButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     GDB gdbInstance;
+    quint64 nStackWords = 28;
+    quint64 nInstructions = 20;
+    quint64 nLines = 10;
+    QString currentLine;
+
+    void setUIInteraction(bool state);
+    void retrieveGDBContext();
+
+    void parseandSetRegistersOutput(QString registersOutput);
+    void parseandSetAssemblyOutput(QString assemblyOutput);
+    void parseandSetStackOutput(QString stackOutput);
+    void parseandSetCodeOutput(QString codeOutput);
+    void parseandSetCodeLine(QString codeFrameOutput);
 };
 
 #endif // MAINWINDOW_H

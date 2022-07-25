@@ -9,6 +9,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->pidBox->hide();			//Comment if you want to see the pid of GDB.
     ui->fileArchBox->setReadOnly(true);
     ui->fileNameBox->setReadOnly(true);
+
+    connect(&gdbInstance, SIGNAL(newOutputReady()), this, SLOT(updateOutput()));
 }
 
 MainWindow::~MainWindow()
@@ -28,7 +30,7 @@ void MainWindow::setUIInteraction(bool state)
         ui->breakButton->setEnabled(true);
         ui->runButton->setEnabled(true);
         ui->sendButton->setEnabled(true);
-        ui->quitButton->setEnabled(true);
+        ui->stopButton->setEnabled(true);
         ui->commandLineArgumentsBox->setEnabled(true);
 
         ui->stepOverButton->setEnabled(true);
@@ -48,7 +50,7 @@ void MainWindow::setUIInteraction(bool state)
         ui->breakButton->setEnabled(false);
         ui->runButton->setEnabled(false);
         ui->sendButton->setEnabled(false);
-        ui->quitButton->setEnabled(false);
+        ui->stopButton->setEnabled(false);
         ui->commandLineArgumentsBox->setEnabled(false);
 
         ui->stepOverButton->setEnabled(false);
@@ -68,7 +70,7 @@ int MainWindow::checkForArguments(QStringList args)
         QFileInfo file(args[1]);
         if (file.exists())
         { //If the argument passed is an existent file
-            gdbInstance.startInstance(args[1]);
+            gdbInstance.start(args[1]);
 
             ui->pidBox->setText(gdbInstance.getPIDString());
             setUIInteraction(true); //Enable the UI
@@ -80,13 +82,12 @@ int MainWindow::checkForArguments(QStringList args)
             ui->fileNameBox->setText(file.fileName());
             ui->fileNameBox->setToolTip(args[1]);
 
-            QString output = gdbInstance.getCurrentOutput();
-            ui->gdbOutputBox->append(output);
+            ui->gdbOutputBox->append(gdbInstance.getCurrentGDBOutput());
             showFileOpenedNotification(file.fileName());
             return 1;   //Opened GDB to a file being debugged in a GDB instance
         }
         //If it isn't a file and isn't a help argument
-        else if  (args[1].toStdString() != "--help" && args[1].toStdString() != "-h")
+        else if  (args[1] != "--help" && args[1] != "-h")
         {
             QMessageBox::information(this, "Invalid Argument", "The specified file doesn't exist, starting to defaults.");
             return 2; //Opened Disass but to a default GDB instance
@@ -95,23 +96,21 @@ int MainWindow::checkForArguments(QStringList args)
     return 0;   //Opened Disass to defaults (no instance running)
 }
 
-void MainWindow::updateRegistersWindow()
+void MainWindow::parseandSetRegistersOutput(QString registersOutput)
 {
     ui->registerBox->clear();
-    gdbInstance.sendCommand("info reg");
-    QString output = gdbInstance.getCurrentOutput();
-    ui->gdbOutputBox->append(output); //Append the output to the GDB output box as is.
-    //Filtering the output
 
+    //Filtering the output
     QVector <QString> lines; //Vector to hold lines
     QString line;            //A single output line
 
+//TODO: Parse these individually and format them better
     if (gdbInstance.isx86())
     {
-        for (int i = 0; i < output.size(); i++)
+        for (int i = 0; i < registersOutput.size(); i++)
         {
             //Push the character if it isn't a newline
-            if (output[i] != '\n') line.push_back(output[i]);
+            if (registersOutput[i] != '\n') line.push_back(registersOutput[i]);
             else
             {
                 //Delete the duplicate values of eip
@@ -128,10 +127,10 @@ void MainWindow::updateRegistersWindow()
     }
     else
     {
-        for (int i = 0; i < output.size(); i++)
+        for (int i = 0; i < registersOutput.size(); i++)
         {
             //Push the character if it isn't a newline
-            if (output[i] != '\n') line.push_back(output[i]);
+            if (registersOutput[i] != '\n') line.push_back(registersOutput[i]);
             else
             {
                 //Delete the duplicate values of rip
@@ -149,29 +148,17 @@ void MainWindow::updateRegistersWindow()
 
     for (int i = 0; i < lines.size(); i++)
         ui->registerBox->append(lines[i]);
-
 }
 
-void MainWindow::updateStackWindow()
+void MainWindow::parseandSetStackOutput(QString stackOutput)
 {
     ui->stackBox->clear();
-    QString nStackWords = "28";
-    //Examine nStackWords words from the top stack down
-    QByteArray output;
-    if (gdbInstance.isx86())   //if the app being debugged is 32-bit
-        output = gdbInstance.getCommandOutput("x/"+nStackWords+"wx $esp");
-    else                //if 64-bit
-        output = gdbInstance.getCommandOutput("x/"+nStackWords+"wx $rsp");
-
-    gdbInstance.sendCommand("."); //Send a dummy command to get the full output.
-    output += gdbInstance.getCurrentOutput(); //Get the rest of the output.
-    ui->gdbOutputBox->append(output); //Append the output to the GDB output box as is.
-
+//TODO: Verify this parsing
     QString word; //Single word from the stack
-    for (int i = 0; i < output.size(); i++)
+    for (int i = 0; i < stackOutput.size(); i++)
     {
         //Append the character if it isn't a newline, space, or tab.
-        if (output[i] != '\n' && output[i] != ' ' && output[i] != '\t')  word += output[i];
+        if (stackOutput[i] != '\n' && stackOutput[i] != ' ' && stackOutput[i] != '\t')  word += stackOutput[i];
         else
         {
             //Append it if it isn't a stack address and isn't any other type of output,
@@ -186,30 +173,18 @@ void MainWindow::updateStackWindow()
             word.clear();
         }
     }
-
 }
 
-void MainWindow::updateAssemblyOutput()
+void MainWindow::parseandSetAssemblyOutput(QString assemblyOutput)
 {
     ui->gdbAsmOutputBox->clear();
-    QString nInstructions = "20";
-    QString output;
-    //Examine nInstructions insructions after the current instruction.
-    if (gdbInstance.isx86())   //if the app being debugged is 32-bit
-        output = gdbInstance.getCommandOutput("x/"+nInstructions+"i $eip");
-    else                //if 64-bit
-        output = gdbInstance.getCommandOutput("x/"+nInstructions+"i $rip");
-
-    gdbInstance.sendCommand("."); //Send a dummy command to get the full output.
-    output += gdbInstance.getCurrentOutput(); //Get the rest of the output.
-    ui->gdbOutputBox->append(output); //Append the output to the GDB output box as is.
-
+//TODO: Properly parse this and make it clickable per line.
     QVector <QString> lines;
     QString line;
 
-    for (int i = 0; i < output.size(); i++)
+    for (int i = 0; i < assemblyOutput.size(); i++)
     {
-        if (output[i] != '\n') line.push_back(output[i]);
+        if (assemblyOutput[i] != '\n') line.push_back(assemblyOutput[i]);
         else
         {
             lines.push_back(line);
@@ -219,34 +194,18 @@ void MainWindow::updateAssemblyOutput()
 
     for (int i = 0; i < lines.size(); i++)
         ui->gdbAsmOutputBox->append(lines[i]);
-
 }
 
-void MainWindow::updateCodeOutput()
+void MainWindow::parseandSetCodeOutput(QString codeOutput)
 {
     ui->gdbCodeOutputBox->clear();
-    //Get the current code line.
-    QString output = gdbInstance.getCommandOutput("frame");
-    //Splitting the string to get rid of the first part of the output.
-    int newLineIndex = output.indexOf('\n', 0);
-    output.remove(0, newLineIndex+1);
-    //Stripping anything except the code line from the string.
-    newLineIndex = output.indexOf('\t', 0);
-    output.remove(newLineIndex,output.size()-(newLineIndex));
-
-    QString currentLine = output; //Save the line number
-
-    output = gdbInstance.getCommandOutput("list " + currentLine);
-    gdbInstance.sendCommand(".");//Send a dummy command to get the full output.
-    output += gdbInstance.getCurrentOutput();
-    ui->gdbOutputBox->append(output); //Append the output to the GDB output box as is.
-
+//TODO: Properly parse this and make it clickable per line.
     QVector <QString> lines;
     QString line;
 
-    for (int i = 0; i < output.size(); i++)
+    for (int i = 0; i < codeOutput.size(); i++)
     {
-        if (output[i] != '\n') line.push_back(output[i]);
+        if (codeOutput[i] != '\n') line.push_back(codeOutput[i]);
         else
         {
             lines.push_back(line);
@@ -263,25 +222,53 @@ void MainWindow::updateCodeOutput()
     }
 }
 
-void MainWindow::updateOutput()
+void MainWindow::parseandSetCodeLine(QString codeFrameOutput)
 {
-    updateStackWindow();
-    updateRegistersWindow();
-    updateAssemblyOutput();
-    updateCodeOutput();
-    ui->gdbOutputBox->append("---------------");
-    //To seperate the output of every step.
+    //Splitting the string to get rid of the first part of the output.
+    int newLineIndex = codeFrameOutput.indexOf('\n', 0);
+    codeFrameOutput.remove(0, newLineIndex+1);
+    //Stripping anything except the code line from the string.
+    newLineIndex = codeFrameOutput.indexOf('\t', 0);
+    codeFrameOutput.remove(newLineIndex,codeFrameOutput.size()-(newLineIndex));
+
+    currentLine = codeFrameOutput; //Save the line number
 }
 
-void MainWindow::updateOutput(std::string output)
+void MainWindow::retrieveGDBContext()
 {
-    ui->gdbOutputBox->append(output.c_str());
-    updateStackWindow();
-    updateRegistersWindow();
-    updateAssemblyOutput();
-    updateCodeOutput();
-    ui->gdbOutputBox->append("---------------");
+    gdbInstance.examineStack(nStackWords);
+    gdbInstance.examineAssembly(nInstructions);
+    gdbInstance.examineRegisters();
+//    gdbInstance.examineCurrentCodeLine();
+//    gdbInstance.examineCodeLines(currentLine);
+}
+
+void MainWindow::updateOutput()
+{
+    ui->gdbOutputBox->append(gdbInstance.getCurrentGDBOutput());
     //To seperate the output of every step.
+    ui->gdbOutputBox->append("\n");
+
+    if (gdbInstance.lastCommand == GDBCommands::ExamineStack)
+    {
+        parseandSetStackOutput(gdbInstance.getCurrentGDBOutput());
+    }
+    else if (gdbInstance.lastCommand == GDBCommands::ExamineAssembly)
+    {
+        parseandSetAssemblyOutput(gdbInstance.getCurrentGDBOutput());
+    }
+    else if (gdbInstance.lastCommand == GDBCommands::ExamineRegisters)
+    {
+        parseandSetRegistersOutput(gdbInstance.getCurrentGDBOutput());
+    }
+//    else if (gdbInstance.lastCommand == GDBCommands::ExamineCodeLine)
+//    {
+//        parseandSetCodeLine(gdbInstance.getCurrentGDBOutput());
+//    }
+//    else if (gdbInstance.lastCommand == GDBCommands::ExamineCode)
+//    {
+//        parseandSetCodeOutput(gdbInstance.getCurrentGDBOutput());
+//    }
 }
 
 void MainWindow::showWelcome()
@@ -308,22 +295,21 @@ void MainWindow::showFileOpenedNotification(QString fileName)
 
 void MainWindow::on_sendButton_clicked()
 {
-    //Sends the typed command to GDB and returns the output.
-    QString output  = gdbInstance.getCommandOutput(ui->commandBox->text());
+    //Sends the typed command to GDB
+    gdbInstance.sendCommand(ui->commandBox->text());
     ui->commandBox->clear();
-    ui->gdbOutputBox->append(output);
 }
 
 void MainWindow::on_intelButton_clicked()
 {
     gdbInstance.sendCommand("set disassembly-flavor intel");
-    updateOutput();
+    retrieveGDBContext();
 }
 
 void MainWindow::on_atNtButton_clicked()
 {
     gdbInstance.sendCommand("set disassembly-flavor att");
-    updateOutput();
+    retrieveGDBContext();
 }
 
 void MainWindow::on_breakButton_clicked()
@@ -331,58 +317,44 @@ void MainWindow::on_breakButton_clicked()
     QString address = ui->breakBox->text();
     gdbInstance.sendCommand("break " + address);
     ui->breakBox->clear();
-    updateOutput();
 }
 
 void MainWindow::on_stepOverButton_clicked()
 {
-    std::string output;
-
-    if (ui->codeOutputTabs->currentIndex() == 0) // If assembly
+    if (ui->codeOutputTabs->currentIndex() == outputTabs::Assembly)
     {
         gdbInstance.sendCommand("nexti");
-        output = gdbInstance.getCurrentOutput().toStdString();
-        updateOutput(output);
     }
-    else if (ui->codeOutputTabs->currentIndex() == 1) // If code
+    else if (ui->codeOutputTabs->currentIndex() == outputTabs::Code)
     {
         gdbInstance.sendCommand("next");
-        output = gdbInstance.getCurrentOutput().toStdString();
-        updateOutput(output);
     }
+    retrieveGDBContext();
 }
 
 void MainWindow::on_stepIntoButton_clicked()
 {
-    std::string output;
-
-    if (ui->codeOutputTabs->currentIndex() == 0) // If assembly
+    if (ui->codeOutputTabs->currentIndex() == outputTabs::Assembly)
     {
         gdbInstance.sendCommand("stepi");
-        output = gdbInstance.getCurrentOutput().toStdString();
-        updateOutput(output);
     }
-    else if (ui->codeOutputTabs->currentIndex() == 1) // If code
+    else if (ui->codeOutputTabs->currentIndex() == outputTabs::Code)
     {
         gdbInstance.sendCommand("step");
-        output = gdbInstance.getCurrentOutput().toStdString();
-        updateOutput(output);
     }
+    retrieveGDBContext();
 }
 
 void MainWindow::on_nextCodeLineButton_clicked()
 {
     gdbInstance.sendCommand("until");
-    std::string output = gdbInstance.getCurrentOutput().toStdString();
-    updateOutput(output);
+    retrieveGDBContext();
 }
 
 void MainWindow::on_continueButton_clicked()
 {
     gdbInstance.sendCommand("continue");
-    std::string output = gdbInstance.getCurrentOutput().toStdString();
-    updateOutput(output);
-
+    retrieveGDBContext();
 }
 
 void MainWindow::on_runButton_clicked()
@@ -391,8 +363,7 @@ void MainWindow::on_runButton_clicked()
     gdbInstance.sendCommand("run " + args);
     ui->commandLineArgumentsBox->clear();
     ui->runButton->setIcon(QPixmap(":/Controls/Icons/Controls/Restart_Button.png"));
-    std::string output = gdbInstance.getCurrentOutput().toStdString();
-    updateOutput(output);
+    retrieveGDBContext();
 }
 
 void MainWindow::on_actionOpen_triggered()
@@ -401,33 +372,24 @@ void MainWindow::on_actionOpen_triggered()
     if (filePath.size() == 0)
     {
         QMessageBox::information(this, tr("Failed"), "Failed to open file, opening GDB to defaults.");
-        gdbInstance.startInstance();
+        gdbInstance.start();
     }
     else
     {
         QFileInfo file(filePath);
         showFileOpenedNotification(file.fileName());
-        gdbInstance.startInstance(filePath);
+        gdbInstance.start(filePath);
         ui->fileArchBox->setText(gdbInstance.getArch());
         ui->fileNameBox->setText(file.fileName());
         ui->fileNameBox->setToolTip(filePath);
     }
-    /*
-    Connect GBD output to textbox //Not needed, kept for debugging purposes.
-    QObject::connect(gdbInstance.getQProcess(), &QProcess::readyReadStandardOutput, this, &MainWindow::setStandardOutput);
-    QObject::connect(gdbInstance.getQProcess(), &QProcess::readyReadStandardError, this, &MainWindow::setStandardError);
-    */
 
     ui->pidBox->setText(gdbInstance.getPIDString());
 
     setUIInteraction(true); //Enable the UI
-
-    QString output = gdbInstance.getCurrentOutput();
-    ui->gdbOutputBox->append(output);
-
 }
 
-void MainWindow::on_quitButton_clicked()
+void MainWindow::on_stopButton_clicked()
 {
     //This function kills GDB and clears the UI.
     gdbInstance.getQProcess()->close();
@@ -467,7 +429,7 @@ void MainWindow::on_actionLicense_triggered()
 
 void MainWindow::on_actionContribute_triggered()
 {
-    QMessageBox::information(this, tr("Contibute"), "Contribute on https://github.com/Satharus/Disass");
+    QMessageBox::information(this, tr("Contibute"), "Contribute at github.com/Satharus/Disass");
     QDesktopServices::openUrl(QUrl("https://github.com/Satharus/Disass"));
 }
 
@@ -494,16 +456,14 @@ void MainWindow::on_actionQuit_triggered()
 
 void MainWindow::on_action64_Bit_triggered()
 {
-    gdbInstance.forceArch("x86-64 Executable");
+    gdbInstance.setArch(ELF_64_STR);
     ui->fileArchBox->setText(gdbInstance.getArch());
-    updateOutput();
 }
 
 void MainWindow::on_action32_Bit_triggered()
 {
-    gdbInstance.forceArch("x86 Executable");
+    gdbInstance.setArch(ELF_32_STR);
     ui->fileArchBox->setText(gdbInstance.getArch());
-    updateOutput();
 }
 
 void MainWindow::on_actionHow_to_Use_triggered()
@@ -516,7 +476,7 @@ void MainWindow::on_actionHow_to_Use_triggered()
 void MainWindow::on_codeOutputTabs_currentChanged(int index)
 {
     //If GDB Output is selected, and a program is being debugged.
-    if (index == 2 && ui->sendButton->isEnabled())
+    if (index == outputTabs::GDBOutput && ui->sendButton->isEnabled())
     {
         ui->stepIntoButton->setEnabled(false);
         ui->stepOverButton->setEnabled(false);
