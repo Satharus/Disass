@@ -3,6 +3,10 @@
 GDB::GDB() : QObject ()
 {
     gdbProcess = new QProcess();
+    /*  This class automatically reads the output from GDB once it is available.
+        We don't need to read any output using readAll() or any QProcess read functions.
+        All we need to do is use the getCurrentGDBOutput() function to retrieve the output.
+    */
     connect(gdbProcess, SIGNAL(readyRead()), this, SLOT(readGDBOutput()));
 }
 
@@ -11,6 +15,7 @@ GDB::~GDB()
     delete gdbProcess;
 }
 
+//Starts gdb with an optional file to be debugged
 void GDB::start(QString filePath)
 {
     //Start gdb with an optional file as a parameter.
@@ -19,6 +24,7 @@ void GDB::start(QString filePath)
     detectandSetArch(filePath);
 }
 
+//Auto detects the architecture of an ELF file using its header
 void GDB::detectandSetArch(QString filePath)
 {
     QFileInfo executable(filePath);
@@ -53,21 +59,21 @@ void GDB::detectandSetArch(QString filePath)
     }
 }
 
+//Set/Get the architecture string of the binary
 void GDB::setArch(QString arch)
 {
     this->arch = arch;
 }
-
 QString GDB::getArch()
 {
     return arch;
 }
 
+//Return true if the architecture string matches the ELF 32/64 string defined in gdb.h
 bool GDB::isx86()
 {
     return (arch == ELF_32_STR);
 }
-
 bool GDB::isx86_64()
 {
     return (arch == ELF_64_STR);
@@ -88,11 +94,13 @@ QProcess *GDB::getQProcess()
     return gdbProcess;
 }
 
+//Returns the currently stored gdb output
 QString GDB::getCurrentGDBOutput()
 {
     return QString(currentGDBOutput);
 }
 
+//Sends the examine command (x) to gdb to get the nStrackWords values at top of the stack.
 void GDB::examineStack(quint64 nStackWords)
 {
     //gdb labels a WORD as 4 bytes, let's agree to disagree
@@ -105,6 +113,7 @@ void GDB::examineStack(quint64 nStackWords)
     lastCommand = GDBCommands::ExamineStack;
 }
 
+//Sends the examine command (x) to gdb to get the next nInstructions instuctions
 void GDB::examineAssembly(quint64 nInstructions)
 {
     QString instructionsStr = QString::number(nInstructions, 10);
@@ -117,24 +126,28 @@ void GDB::examineAssembly(quint64 nInstructions)
     lastCommand = GDBCommands::ExamineAssembly;
 }
 
+//Sends the "info reg" command to gdb to get the register values
 void GDB::examineRegisters()
 {
     sendCommand("info reg");
     lastCommand = GDBCommands::ExamineRegisters;
 }
 
+//Sends the "frame" command to gdb to get the current code line being executed
 void GDB::examineCurrentCodeLine()
 {
     sendCommand("frame");
     lastCommand = GDBCommands::ExamineCodeLine;
 }
 
+//Sends the "list" command to gdb to get the current code line being executed
 void GDB::examineCodeLines(QString currentLine)
 {
     sendCommand("list " + currentLine);
     lastCommand = GDBCommands::ExamineCode;
 }
 
+//Sends the specified command to gdb, and waits for the output
 void GDB::sendCommand(QString command)
 {
     //Add the \n character to simulate an enter keypress in gdb.

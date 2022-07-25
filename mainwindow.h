@@ -15,6 +15,7 @@
 
 #include "gdb.h"
 
+//The output pages in the main window
 enum outputTabs
 {
     Assembly = 0, Code, GDBOutput
@@ -80,18 +81,19 @@ private slots:
 private:
     Ui::MainWindow *ui;
     GDB gdbInstance;
-    quint64 nStackWords = 28;
-    quint64 nInstructions = 20;
-    quint64 nLines = 10;
+    quint64 nStackWords = 28; //Default number of stack "words" to query from gdb
+    quint64 nInstructions = 20; //Default number of assembly instructions to query from gdb
+    quint64 nLines = 10; //Default number of code lines to query from gdb
     QString currentLine;
 
     //Add a config struct later on maybe?
     QString configFilePath = configDirPath + "lastDirectory";
-    QString lastDirectoryPath;
+    QString lastDirectoryPath; //The last directory an executable has been chosen from.
 
     void setUIInteraction(bool state);
     void retrieveGDBContext();
 
+    //Functions to parse the gdb output
     void parseandSetRegistersOutput(QString registersOutput);
     void parseandSetAssemblyOutput(QString assemblyOutput);
     void parseandSetStackOutput(QString stackOutput);

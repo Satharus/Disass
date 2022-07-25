@@ -10,8 +10,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->fileArchBox->setReadOnly(true);
     ui->fileNameBox->setReadOnly(true);
 
+    /*The GDB class emits a signal newOutputReady() when readyRead() is emitted from the QProcess instance.
+      The slot updateOutput() is called everytime, and parses any output from GDB in order to make gdb and Disass
+      coherent.
+
+      updateOutput() parses the output based on the last command sent to GDB. Each send function sets the lastCommand
+      variable in the GDB class.
+     */
     connect(&gdbInstance, SIGNAL(newOutputReady()), this, SLOT(updateOutput()));
 
+    //Check for the Disass condif directory
     QFile config(configFilePath);
     if (config.exists())
     {
@@ -111,6 +119,7 @@ int MainWindow::checkForArguments(QStringList args)
     return 0;   //Opened Disass to defaults (no instance running)
 }
 
+//Parses the output of "info reg" from gdb
 void MainWindow::parseandSetRegistersOutput(QString registersOutput)
 {
     ui->registerBox->clear();
@@ -165,6 +174,7 @@ void MainWindow::parseandSetRegistersOutput(QString registersOutput)
         ui->registerBox->append(lines[i]);
 }
 
+//Parses the output of examining memory before the stack pointer ($rsp/$esp) in gdb
 void MainWindow::parseandSetStackOutput(QString stackOutput)
 {
     ui->stackBox->clear();
@@ -190,6 +200,7 @@ void MainWindow::parseandSetStackOutput(QString stackOutput)
     }
 }
 
+//Parses the output of examining instructions after the instuctipn pointer ($rip/$eip) in gdb
 void MainWindow::parseandSetAssemblyOutput(QString assemblyOutput)
 {
     ui->gdbAsmOutputBox->clear();
@@ -211,6 +222,7 @@ void MainWindow::parseandSetAssemblyOutput(QString assemblyOutput)
         ui->gdbAsmOutputBox->append(lines[i]);
 }
 
+//Parses the output of examining code lines (list) after the current line (frame) in gdb
 void MainWindow::parseandSetCodeOutput(QString codeOutput)
 {
     ui->gdbCodeOutputBox->clear();
@@ -237,6 +249,7 @@ void MainWindow::parseandSetCodeOutput(QString codeOutput)
     }
 }
 
+//Parses the output of "frame" in gdb to get the current code line being executed
 void MainWindow::parseandSetCodeLine(QString codeFrameOutput)
 {
     //Splitting the string to get rid of the first part of the output.
@@ -249,6 +262,7 @@ void MainWindow::parseandSetCodeLine(QString codeFrameOutput)
     currentLine = codeFrameOutput; //Save the line number
 }
 
+//This function examines the stack, assembly instructions, registers, current code line, and code lines from gdb.
 void MainWindow::retrieveGDBContext()
 {
     gdbInstance.examineStack(nStackWords);
@@ -258,6 +272,7 @@ void MainWindow::retrieveGDBContext()
 //    gdbInstance.examineCodeLines(currentLine);
 }
 
+//Parses the output of gdb and updates the UI based on the last command executed.
 void MainWindow::updateOutput()
 {
     ui->gdbOutputBox->append(gdbInstance.getCurrentGDBOutput());
@@ -291,6 +306,7 @@ void MainWindow::updateOutput()
 //    }
 }
 
+//Shows a welcome message to the user
 void MainWindow::showWelcome()
 {
     QMessageBox welcome(QMessageBox::Information, "Welcome", "\tWelcome to Disass!\nYou can load an executable from the file menu.");
@@ -299,6 +315,7 @@ void MainWindow::showWelcome()
     welcome.exec();
 }
 
+//Shows when a file is opened to guide the user. This is temporary and will be removed when a help section is properly created
 void MainWindow::showFileOpenedNotification(QString fileName)
 {
     QMessageBox notification(QMessageBox::Information,"Success",
@@ -313,25 +330,29 @@ void MainWindow::showFileOpenedNotification(QString fileName)
     notification.exec();
 }
 
+//Sends the typed command to GDB, we don't need to read any output as that already happens using the connected signal and slot
 void MainWindow::on_sendButton_clicked()
 {
-    //Sends the typed command to GDB
+
     gdbInstance.sendCommand(ui->commandBox->text());
     ui->commandBox->clear();
 }
 
+//Sets the disassembly to Intel syntax
 void MainWindow::on_intelButton_clicked()
 {
     gdbInstance.sendCommand("set disassembly-flavor intel");
     retrieveGDBContext();
 }
 
+//Sets the disassembly to AT&T syntax
 void MainWindow::on_atNtButton_clicked()
 {
     gdbInstance.sendCommand("set disassembly-flavor att");
     retrieveGDBContext();
 }
 
+//Sets a breakpoint on the specified address/line number
 void MainWindow::on_breakButton_clicked()
 {
     QString address = ui->breakBox->text();
@@ -339,6 +360,7 @@ void MainWindow::on_breakButton_clicked()
     ui->breakBox->clear();
 }
 
+//Steps over the current instruction/line
 void MainWindow::on_stepOverButton_clicked()
 {
     if (ui->codeOutputTabs->currentIndex() == outputTabs::Assembly)
@@ -352,6 +374,7 @@ void MainWindow::on_stepOverButton_clicked()
     retrieveGDBContext();
 }
 
+//Steps into the current instruction/line
 void MainWindow::on_stepIntoButton_clicked()
 {
     if (ui->codeOutputTabs->currentIndex() == outputTabs::Assembly)
@@ -365,18 +388,21 @@ void MainWindow::on_stepIntoButton_clicked()
     retrieveGDBContext();
 }
 
+//Executes until the next code line
 void MainWindow::on_nextCodeLineButton_clicked()
 {
     gdbInstance.sendCommand("until");
     retrieveGDBContext();
 }
 
+//Continues execution until the debuggee exists or a breakpoint is hit
 void MainWindow::on_continueButton_clicked()
 {
     gdbInstance.sendCommand("continue");
     retrieveGDBContext();
 }
 
+//Runs the specified debuggee
 void MainWindow::on_runButton_clicked()
 {
     QString args = ui->commandLineArgumentsBox->text();
@@ -389,6 +415,7 @@ void MainWindow::on_runButton_clicked()
     retrieveGDBContext();
 }
 
+//Chooses a binary to be debugged and updates the UI and config files accordingly
 void MainWindow::on_actionOpen_triggered()
 {
     QString filePath = QFileDialog::getOpenFileName(this, tr("Open Binary"), lastDirectoryPath);
@@ -421,6 +448,7 @@ void MainWindow::on_actionOpen_triggered()
     setUIInteraction(true); //Enable the UI
 }
 
+//Stops a binary from being debugged and updates the UI accordingly
 void MainWindow::on_stopButton_clicked(bool clearGDB)
 {
     //This function kills GDB and clears the UI.
@@ -442,6 +470,7 @@ void MainWindow::on_stopButton_clicked(bool clearGDB)
     ui->runButton->setIcon(QPixmap(":/Controls/Icons/Controls/Start_Button.png"));
 }
 
+//Shows a license prompt to the user
 void MainWindow::on_actionLicense_triggered()
 {
     QMessageBox license;
@@ -460,12 +489,14 @@ void MainWindow::on_actionLicense_triggered()
     license.exec();
 }
 
+//Opens the URL for the repo to the user as well as a messagebox
 void MainWindow::on_actionContribute_triggered()
 {
     QMessageBox::information(this, tr("Contibute"), "Contribute at github.com/Satharus/Disass");
     QDesktopServices::openUrl(QUrl("https://github.com/Satharus/Disass"));
 }
 
+//Info about Disass
 void MainWindow::on_actionAbout_triggered()
 {
     QMessageBox about;
@@ -487,18 +518,21 @@ void MainWindow::on_actionQuit_triggered()
     QApplication::quit();
 }
 
+//Sets the architecture to 64bit
 void MainWindow::on_action64_Bit_triggered()
 {
     gdbInstance.setArch(ELF_64_STR);
     ui->fileArchBox->setText(gdbInstance.getArch());
 }
 
+//Sets the architecture to 32bit
 void MainWindow::on_action32_Bit_triggered()
 {
     gdbInstance.setArch(ELF_32_STR);
     ui->fileArchBox->setText(gdbInstance.getArch());
 }
 
+//Shows the help GIF
 void MainWindow::on_actionHow_to_Use_triggered()
 {
     Help help;
@@ -508,7 +542,7 @@ void MainWindow::on_actionHow_to_Use_triggered()
 
 void MainWindow::on_codeOutputTabs_currentChanged(int index)
 {
-    //If GDB Output is selected, and a program is being debugged.
+    //If GDB Output is selected, and a program is being debugged, sendButton is enabled only when a program is being debugged
     if (index == outputTabs::GDBOutput && ui->sendButton->isEnabled())
     {
         ui->stepIntoButton->setEnabled(false);
