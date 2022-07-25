@@ -5,10 +5,12 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QTextStream>
 #include <QString>
 #include <QWindow>
 #include <QLabel>
 #include <QMovie>
+#include <QTime>
 #include <QDir>
 
 #include "gdb.h"
@@ -31,6 +33,7 @@ public:
     int checkForArguments(QStringList args);
     void showWelcome();
     void showFileOpenedNotification(QString fileName);
+    QString configDirPath = QDir::homePath() + "/.config/Disass/";
     ~MainWindow();
 
 private slots:
@@ -72,7 +75,7 @@ private slots:
 
     void on_codeOutputTabs_currentChanged(int index);
 
-    void on_stopButton_clicked();
+    void on_stopButton_clicked(bool clearGDB = true);
 
 private:
     Ui::MainWindow *ui;
@@ -81,6 +84,10 @@ private:
     quint64 nInstructions = 20;
     quint64 nLines = 10;
     QString currentLine;
+
+    //Add a config struct later on maybe?
+    QString configFilePath = configDirPath + "lastDirectory";
+    QString lastDirectoryPath;
 
     void setUIInteraction(bool state);
     void retrieveGDBContext();

@@ -11,6 +11,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->fileNameBox->setReadOnly(true);
 
     connect(&gdbInstance, SIGNAL(newOutputReady()), this, SLOT(updateOutput()));
+
+    QFile config(configFilePath);
+    if (config.exists())
+    {
+        if(config.open(QIODevice::ReadOnly))
+        {
+            QTextStream input(&config);
+            lastDirectoryPath = input.readLine();
+        }
+    }
+    else
+    {
+        lastDirectoryPath = QDir::homePath();
+    }
+    config.close();
 }
 
 MainWindow::~MainWindow()
@@ -249,6 +264,11 @@ void MainWindow::updateOutput()
     //To seperate the output of every step.
     ui->gdbOutputBox->append("\n");
 
+    if (gdbInstance.getCurrentGDBOutput().contains("exited with code"))
+    {
+        on_stopButton_clicked(false);
+    }
+
     if (gdbInstance.lastCommand == GDBCommands::ExamineStack)
     {
         parseandSetStackOutput(gdbInstance.getCurrentGDBOutput());
@@ -363,12 +383,15 @@ void MainWindow::on_runButton_clicked()
     gdbInstance.sendCommand("run " + args);
     ui->commandLineArgumentsBox->clear();
     ui->runButton->setIcon(QPixmap(":/Controls/Icons/Controls/Restart_Button.png"));
+    on_intelButton_clicked();
+    retrieveGDBContext();
+    retrieveGDBContext();
     retrieveGDBContext();
 }
 
 void MainWindow::on_actionOpen_triggered()
 {
-    QString filePath = QFileDialog::getOpenFileName(this, tr("Open Binary"), QDir::currentPath());
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Open Binary"), lastDirectoryPath);
     if (filePath.size() == 0)
     {
         QMessageBox::information(this, tr("Failed"), "Failed to open file, opening GDB to defaults.");
@@ -382,6 +405,15 @@ void MainWindow::on_actionOpen_triggered()
         ui->fileArchBox->setText(gdbInstance.getArch());
         ui->fileNameBox->setText(file.fileName());
         ui->fileNameBox->setToolTip(filePath);
+
+        QFile config(configFilePath);
+        lastDirectoryPath = file.canonicalPath();
+        if(config.open(QIODevice::WriteOnly))
+        {
+            QTextStream output(&config);
+            output << lastDirectoryPath;
+        }
+        config.close();
     }
 
     ui->pidBox->setText(gdbInstance.getPIDString());
@@ -389,18 +421,19 @@ void MainWindow::on_actionOpen_triggered()
     setUIInteraction(true); //Enable the UI
 }
 
-void MainWindow::on_stopButton_clicked()
+void MainWindow::on_stopButton_clicked(bool clearGDB)
 {
     //This function kills GDB and clears the UI.
     gdbInstance.getQProcess()->close();
     gdbInstance.getQProcess()->kill();	//Kill the GDB process
+    gdbInstance.lastCommand = -1;
     setUIInteraction(false);	//Disable UI interaction
     ui->pidBox->clear();
     ui->breakBox->clear();
     ui->commandLineArgumentsBox->clear();
     ui->gdbAsmOutputBox->clear();
     ui->gdbCodeOutputBox->clear();
-    ui->gdbOutputBox->clear();
+    if (clearGDB) ui->gdbOutputBox->clear();
     ui->registerBox->clear();
     ui->stackBox->clear();
     ui->fileArchBox->clear();

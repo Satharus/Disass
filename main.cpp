@@ -1,6 +1,8 @@
-#include "mainwindow.h"
 #include <QApplication>
 #include <iostream>
+
+#include "shellfunctions.h"
+#include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {
@@ -10,10 +12,33 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    QApplication a(argc, argv);
 
+    QApplication a(argc, argv);
     MainWindow w;
-    w.show();
+
+
+    QString gdbFound = getShellCommandOutput("which gdb");
+    if (gdbFound.isEmpty())
+    {
+        QMessageBox::critical(nullptr, "GDB not found", "Please install GDB using your package manager.\n\nExiting.");
+        return 1;
+    }
+    else
+    {
+        w.show();
+    }
+
+
+
+    QDir *configDirectory = new QDir(w.configDirPath);
+    if (!configDirectory->exists())
+    {
+        configDirectory->mkpath(w.configDirPath);
+    }
+    else
+    {
+        return a.exec();
+    }
 
     if (!w.checkForArguments(QCoreApplication::arguments()))
         w.showWelcome();
